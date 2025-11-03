@@ -40,9 +40,9 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItemById(@Valid @PathVariable Long itemId) {
+    public ItemDto updateItemById(@Valid @PathVariable Long itemId, @Valid @RequestBody Item item) {
         log.info("updateItemById()");
-        return itemService.updateItemById(itemId);
+        return itemService.updateItemById(itemId, item);
     }
 
 }

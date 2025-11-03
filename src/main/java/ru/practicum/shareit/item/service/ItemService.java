@@ -11,9 +11,9 @@ public interface ItemService {
 
     Collection<ItemDto> getItems();
 
-    ItemDto getItemById(@Valid Long itemId);
+    ItemDto getItemById(Long itemId);
 
-    ItemDto createItem(@Valid Item item);
+    ItemDto createItem(Item item);
 
-    ItemDto updateItemById(@Valid Long itemId);
+    ItemDto updateItemById(Long itemId, Item item);
 }

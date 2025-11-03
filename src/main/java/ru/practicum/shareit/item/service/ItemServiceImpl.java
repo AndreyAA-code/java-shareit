@@ -1,32 +1,47 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.ItemRepository;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService {
+
+    ItemRepository itemRepository;
 
     @Override
     public Collection<ItemDto> getItems() {
-        return List.of();
+        log.info("getItems()");
+        return itemRepository.getItems()
+                .stream()
+                .map(ItemMapper::mapItemToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ItemDto getItemById(Long itemId) {
-        return null;
+        log.info("getItemById({})", itemId);
+        return ItemMapper.mapItemToDto(itemRepository.getItemById(itemId));
     }
 
     @Override
     public ItemDto createItem(Item item) {
-        return null;
+        log.info("createItem({})", item);
+        return ItemMapper.mapItemToDto(itemRepository.createItem(item));
     }
 
     @Override
-    public ItemDto updateItemById(Long itemId) {
-        return null;
+    public ItemDto updateItemById(Long itemId, Item item) {
+        log.info("updateItemById({})", itemId);
+        return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, item));
     }
 }
