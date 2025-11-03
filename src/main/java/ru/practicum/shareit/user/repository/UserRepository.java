@@ -1,10 +1,9 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.repository;
 
-import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 
-@Repository
 public interface UserRepository {
 
     Collection<User> getUsers();

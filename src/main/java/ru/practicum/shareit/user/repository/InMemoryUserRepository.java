@@ -1,10 +1,11 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 public class InMemoryUserRepository implements UserRepository {
-    Map<Long,User> users = new HashMap<>();
+    Map<Long, User> users = new HashMap<>();
 
     @Override
     public Collection<User> getUsers() {
