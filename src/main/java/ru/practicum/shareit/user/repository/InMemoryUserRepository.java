@@ -38,7 +38,7 @@ public class InMemoryUserRepository implements UserRepository {
     public User updateUser(Long userId, User user) {
         checkIfIdExists(userId);
         User newUser = users.get(userId);
-        if(!(user.getEmail() == null)) {
+        if (!(user.getEmail() == null)) {
             checkIfEmailExists(user.getEmail());
             newUser.setEmail(user.getEmail());
         }
@@ -72,18 +72,17 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     private void checkIfEmailExists(String email) {
-      if (users.values()
+        if (users.values()
                 .stream()
-              .map(User::getEmail)
-              .anyMatch(email::equals))
-      {
-      throw new EmailAlreadyExistsException("Email " + email + " уже существует");
-      }
+                .map(User::getEmail)
+                .anyMatch(email::equals)) {
+            throw new EmailAlreadyExistsException("Email " + email + " уже существует");
         }
+    }
 
-        private void checkIfIdExists(Long userId) {
+    private void checkIfIdExists(Long userId) {
         if (!users.containsKey(userId)) {
             throw new NotFoundException("User with id " + userId + " not found");
         }
-        }
+    }
 }

@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
 
     ItemRepository itemRepository;
+    UserRepository userRepository;
 
     @Override
     public Collection<ItemDto> getItems() {
@@ -34,14 +36,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto createItem(Item item) {
+    public ItemDto createItem(Item item, Long userId) {
+        userRepository.getUserById(userId);
         log.info("createItem({})", item);
-        return ItemMapper.mapItemToDto(itemRepository.createItem(item));
+        return ItemMapper.mapItemToDto(itemRepository.createItem(item, userId));
     }
 
     @Override
-    public ItemDto updateItemById(Long itemId, Item item) {
+    public ItemDto updateItemById(Long itemId, Item item, Long userId) {
+        userRepository.getUserById(userId);
         log.info("updateItemById({})", itemId);
-        return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, item));
+        return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, item, userId));
     }
 }

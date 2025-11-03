@@ -12,7 +12,7 @@ public interface ItemRepository {
 
     Item getItemById(Long itemId);
 
-    Item createItem(Item item);
+    Item createItem(Item item, Long userId);
 
-    Item updateItemById(Long itemId, Item item);
+    Item updateItemById(Long itemId, Item item, Long userId);
 }

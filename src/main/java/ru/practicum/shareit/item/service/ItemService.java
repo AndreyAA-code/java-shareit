@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 
-import jakarta.validation.Valid;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
@@ -13,7 +12,7 @@ public interface ItemService {
 
     ItemDto getItemById(Long itemId);
 
-    ItemDto createItem(Item item);
+    ItemDto createItem(Item item, Long userId);
 
-    ItemDto updateItemById(Long itemId, Item item);
+    ItemDto updateItemById(Long itemId, Item item, Long userId);
 }

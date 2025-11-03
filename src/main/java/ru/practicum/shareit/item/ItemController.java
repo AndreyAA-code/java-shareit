@@ -34,15 +34,18 @@ public class ItemController {
     }
 
     @PostMapping ("")
-    public ItemDto createItem(@Valid @RequestBody Item item) {
+    public ItemDto createItem(@Valid @RequestBody Item item,
+                              @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("createItem()");
-        return itemService.createItem(item);
+        return itemService.createItem(item, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItemById(@Valid @PathVariable Long itemId, @Valid @RequestBody Item item) {
+    public ItemDto updateItemById(@Valid @PathVariable Long itemId,
+                                  @Valid @RequestBody Item item,
+                                  @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("updateItemById()");
-        return itemService.updateItemById(itemId, item);
+        return itemService.updateItemById(itemId, item, userId);
     }
 
 }

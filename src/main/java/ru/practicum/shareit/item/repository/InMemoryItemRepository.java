@@ -33,17 +33,21 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Item createItem(Item item) {
+    public Item createItem(Item item, Long userId) {
         log.info("createItem({})", item);
         item.setId(getNextId());
+        item.setOwnerId(userId);
         items.put(item.getId(), item);
         log.info("created Item({})", item);
         return item;
     }
 
     @Override
-    public Item updateItemById(Long itemId, Item item) {
+    public Item updateItemById(Long itemId, Item item, Long userId) {
         checkItemById(itemId);
+        if (items.get(itemId).getOwnerId() != userId) {
+            throw new NotFoundException("Владелец вещи в запросе не соответствует реальному");
+        }
         log.info("updateItemById({})", itemId);
 
         return null;
