@@ -3,24 +3,30 @@ package ru.practicum.shareit.user;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
 
-    public Collection<User> getUsers() {
-        return userRepository.getUsers();
+    public Collection<UserDto> getUsers() {
+        return userRepository.getUsers()
+                .stream()
+                .map(UserMapper::mapToUserDto)
+                .collect(Collectors.toList());
     }
 
-    public User createUser(User user) {
-        return userRepository.create(user);
+    public UserDto createUser(User user) {
+        return UserMapper.mapToUserDto(userRepository.create(user));
     }
 
-    public User updateUser(@Valid Long userId, @Valid User user) {
-        return userRepository.updateUser(userId, user);
+    public UserDto updateUser(@Valid Long userId, @Valid User user) {
+        return UserMapper.mapToUserDto(userRepository.updateUser(userId, user));
     }
 
 
@@ -28,7 +34,7 @@ public class UserService {
         userRepository.deleteUser(userId);
     }
 
-    public User getUserById(Long userId) {
-        return userRepository.getUserById(userId);
+    public UserDto getUserById(Long userId) {
+        return UserMapper.mapToUserDto(userRepository.getUserById(userId));
     }
 }

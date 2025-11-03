@@ -81,7 +81,6 @@ public class InMemoryUserRepository implements UserRepository {
         }
 
         private void checkIfIdExists(Long userId) {
-        if
         if (!users.containsKey(userId)) {
             throw new NotFoundException("User with id " + userId + " not found");
         }
