@@ -49,4 +49,9 @@ public class ItemController {
         return itemService.updateItemById(itemId, updates, userId);
     }
 
+    @GetMapping ("/search")
+    public Collection<ItemDto> searchAvailableItems(@RequestParam String descr) {
+        return itemService.searchItemsByNameAndDescription(descr);
+    }
+
 }

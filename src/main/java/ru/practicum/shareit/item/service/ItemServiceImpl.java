@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -48,5 +49,13 @@ public class ItemServiceImpl implements ItemService {
         userRepository.getUserById(userId);
         log.info("updateItemById({})", itemId);
         return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, updates, userId));
+    }
+
+    @Override
+    public Collection<ItemDto> searchItemsByNameAndDescription(String descr) {
+        return userRepository.searchItemsByNameAndDescription(descr)
+                .stream()
+                .map(ItemMapper::mapItemToDto)
+                .collect(Collectors.toList());
     }
 }

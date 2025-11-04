@@ -16,4 +16,5 @@ public interface UserRepository {
 
     User getUserById(Long userId);
 
+    Collection<Object> searchItemsByNameAndDescription(String descr);
 }
