@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -60,12 +59,6 @@ public class InMemoryUserRepository implements UserRepository {
         checkIfIdExists(userId);
         log.info("Get user with id {}.", userId);
         return users.get(userId);
-    }
-
-    @Override
-    public Collection<Object> searchItemsByNameAndDescription(String descr) {
-
-
     }
 
     private Long getNextId() {

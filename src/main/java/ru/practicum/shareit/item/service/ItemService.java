@@ -17,6 +17,6 @@ public interface ItemService {
 
     ItemDto updateItemById(Long itemId, Map <String, Object> updates, Long userId);
 
-    Collection<ItemDto> searchItemsByNameAndDescription(String descr);
+    Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId);
 
 }

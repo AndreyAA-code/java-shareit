@@ -50,8 +50,9 @@ public class ItemController {
     }
 
     @GetMapping ("/search")
-    public Collection<ItemDto> searchAvailableItems(@RequestParam String descr) {
-        return itemService.searchItemsByNameAndDescription(descr);
+    public Collection<ItemDto> searchAvailableItems(@RequestParam String text,
+                                                    @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
+        return itemService.searchItemsByNameAndDescription(text, userId);
     }
 
 }

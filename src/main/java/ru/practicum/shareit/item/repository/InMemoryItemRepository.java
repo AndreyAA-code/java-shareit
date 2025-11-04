@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,21 @@ public class InMemoryItemRepository implements ItemRepository {
         });
 
         return updatedItem;
+    }
+
+    @Override
+    public Collection<Item> searchItemsByNameAndDescription(String descr, Long userId) {
+        log.info("searchItemsByNameAndDescription({})", descr);
+        if (descr == null || descr.isEmpty()) {
+            return List.of();
+        }
+        String searchText = descr.toLowerCase();
+       return items.values().stream()
+               .filter(item -> item.getAvailable() == true
+               || !item.getOwnerId().equals(userId))
+                .filter(item -> item.getDescription().toLowerCase().contains(searchText)
+                        || item.getName().toLowerCase().contains(searchText))
+                .collect(Collectors.toList());
     }
 
     private Long getNextId() {

@@ -52,8 +52,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> searchItemsByNameAndDescription(String descr) {
-        return userRepository.searchItemsByNameAndDescription(descr)
+    public Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId) {
+        return itemRepository.searchItemsByNameAndDescription(descr, userId)
                 .stream()
                 .map(ItemMapper::mapItemToDto)
                 .collect(Collectors.toList());
