@@ -19,10 +19,11 @@ public class InMemoryItemRepository implements ItemRepository {
     Map<Long, Item> items = new HashMap<>();
 
     @Override
-    public Collection<Item> getItems() {
-        log.info("getItems()");
+    public Collection<Item> getItems(Long userId) {
+        log.info("getItems by userId = {}", userId);
         return items.values()
                 .stream()
+                .filter(item -> item.getOwnerId().equals(userId))
                 .collect(Collectors.toList());
     }
 
@@ -43,14 +44,32 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Item updateItemById(Long itemId, Item item, Long userId) {
+    public Item updateItemById(Long itemId, Map <String, Object> updates, Long userId) {
         checkItemById(itemId);
-        if (items.get(itemId).getOwnerId() != userId) {
-            throw new NotFoundException("Владелец вещи в запросе не соответствует реальному");
+        if (!items.get(itemId).getOwnerId().equals(userId)) {
+            throw new NotFoundException("Нет прав на просмотр. Владелец вещи в запросе не соответствует реальному");
         }
+        Item updatedItem = items.get(itemId);
+
         log.info("updateItemById({})", itemId);
 
-        return null;
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "name":
+                    items.get(itemId).setName((String) value);
+                    break;
+                case "description":
+                    items.get(itemId).setDescription((String) value);
+                    break;
+                    case "available":
+                        items.get(itemId).setAvailable((boolean) value);
+                        break;
+                default:
+                    throw new NotFoundException("такого поля у Item нет");
+            }
+        });
+
+        return updatedItem;
     }
 
     private Long getNextId() {

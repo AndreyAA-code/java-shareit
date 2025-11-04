@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * TODO Sprint add-controllers.
@@ -22,9 +23,9 @@ public class ItemController {
     ItemService itemService;
 
     @GetMapping("")
-    public Collection<ItemDto> getItems() {
-        log.info("getItems()");
-        return itemService.getItems();
+    public Collection<ItemDto> getItems(@RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
+        log.info("getItems() for user {}", userId);
+        return itemService.getItems(userId);
     }
 
     @GetMapping("/{itemId}")
@@ -42,10 +43,10 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItemById(@Valid @PathVariable Long itemId,
-                                  @Valid @RequestBody Item item,
+                                  @Valid @RequestBody Map<String, Object> updates,
                                   @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("updateItemById()");
-        return itemService.updateItemById(itemId, item, userId);
+        return itemService.updateItemById(itemId, updates, userId);
     }
 
 }
