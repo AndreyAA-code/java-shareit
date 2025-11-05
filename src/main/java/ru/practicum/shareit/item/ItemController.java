@@ -22,7 +22,7 @@ public class ItemController {
 
     ItemService itemService;
 
-    @GetMapping("")
+    @GetMapping()
     public Collection<ItemDto> getItems(@RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("getItems() for user {}", userId);
         return itemService.getItems(userId);
@@ -34,7 +34,7 @@ public class ItemController {
         return itemService.getItemById(itemId);
     }
 
-    @PostMapping ("")
+    @PostMapping()
     public ItemDto createItem(@Valid @RequestBody Item item,
                               @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("createItem()");

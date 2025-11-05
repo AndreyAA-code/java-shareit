@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.Collection;
 import java.util.Map;
 
-@Repository
 public interface ItemRepository {
 
     Collection<Item> getItems(Long userId);

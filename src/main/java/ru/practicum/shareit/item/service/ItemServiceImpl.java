@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    ItemRepository itemRepository;
-    UserRepository userRepository;
+    private ItemRepository itemRepository;
+    private UserRepository userRepository;
 
     @Override
     public Collection<ItemDto> getItems(Long userId) {

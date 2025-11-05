@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 @Data
 @Builder
 public class ItemRequestDto {
-    Long id;
-    String description;
-    Long requestor;
-    Timestamp request;
+    private Long id;
+    private String description;
+    private Long requestor;
+    private Timestamp request;
 }

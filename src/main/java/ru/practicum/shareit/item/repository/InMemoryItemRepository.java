@@ -14,10 +14,9 @@ import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
-@Primary
 public class InMemoryItemRepository implements ItemRepository {
 
-    Map<Long, Item> items = new HashMap<>();
+    private Map<Long, Item> items = new HashMap<>();
 
     @Override
     public Collection<Item> getItems(Long userId) {

@@ -6,10 +6,10 @@ import java.sql.Timestamp;
 
 @Data
 public class Booking {
-    Long id;
-    Timestamp start;
-    Timestamp end;
-    Long item;
-    Long booker;
-    BookingStatus bookingStatus;
+    private Long id;
+    private Timestamp start;
+    private Timestamp end;
+    private Long item;
+    private Long booker;
+    private BookingStatus bookingStatus;
 }
