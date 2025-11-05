@@ -1,9 +1,11 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Item;
 
+@Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
     public static ItemDto mapItemToDto(Item item) {
