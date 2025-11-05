@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.model;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.sql.Timestamp;
