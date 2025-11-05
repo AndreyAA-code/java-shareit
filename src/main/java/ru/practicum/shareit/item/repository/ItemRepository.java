@@ -15,7 +15,7 @@ public interface ItemRepository {
 
     Item createItem(Item item, Long userId);
 
-    Item updateItemById(Long itemId, Map <String, Object> updates, Long userId);
+    Item updateItemById(Long itemId, Map<String, Object> updates, Long userId);
 
     Collection<Item> searchItemsByNameAndDescription(String descr, Long userId);
 

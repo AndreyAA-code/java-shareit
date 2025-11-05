@@ -45,7 +45,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Item updateItemById(Long itemId, Map <String, Object> updates, Long userId) {
+    public Item updateItemById(Long itemId, Map<String, Object> updates, Long userId) {
         checkItemById(itemId);
         if (!items.get(itemId).getOwnerId().equals(userId)) {
             throw new NotFoundException("Нет прав на просмотр. Владелец вещи в запросе не соответствует реальному");
@@ -102,7 +102,7 @@ public class InMemoryItemRepository implements ItemRepository {
     private void checkItemById(Long itemId) {
         log.info("checkItemById({})", itemId);
         if (!(items.containsKey(itemId))) {
-            throw new NotFoundException("Item with id:" + itemId +" not found");
+            throw new NotFoundException("Item with id:" + itemId + " not found");
         }
     }
 

@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItemById(Long itemId, Map <String, Object> updates, Long userId) {
+    public ItemDto updateItemById(Long itemId, Map<String, Object> updates, Long userId) {
         userRepository.getUserById(userId);
         log.info("updateItemById({})", itemId);
         return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, updates, userId));
