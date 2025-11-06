@@ -4,8 +4,11 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -26,15 +29,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(User user) {
+    public UserDto createUser(UserCreateDto userCreateDto) {
+        User user = UserMapper.mapToUser(userCreateDto);
         return UserMapper.mapToUserDto(userRepository.create(user));
     }
 
     @Override
-    public UserDto updateUser(@Valid Long userId, @Valid User user) {
-        return UserMapper.mapToUserDto(userRepository.updateUser(userId, user));
+    public UserDto updateUser(@Valid Long userId, @Valid UserUpdateDto userUpdateDto) {
+        User updatedUser = UserMapper.mapToUserFields();
+        return UserMapper.mapToUserDto(userRepository.updateUser(userId, updatedUser));
     }
 
+    }
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteUser(userId);
