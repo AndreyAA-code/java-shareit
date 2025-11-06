@@ -1,12 +1,17 @@
 package ru.practicum.shareit.item.service;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
@@ -37,17 +42,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto createItem(Item item, Long userId) {
+    public ItemDto createItem(ItemCreateDto itemCreateDto, Long userId) {
         userRepository.getUserById(userId);
-        log.info("createItem({})", item);
+        log.info("createItem({})", itemCreateDto);
+        Item item = ItemMapper.mapItemDtoToItem(itemCreateDto);
         return ItemMapper.mapItemToDto(itemRepository.createItem(item, userId));
     }
 
     @Override
-    public ItemDto updateItemById(Long itemId, Map<String, Object> updates, Long userId) {
+    public ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId) {
         userRepository.getUserById(userId);
         log.info("updateItemById({})", itemId);
-        return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, updates, userId));
+        Item existingItem = itemRepository.getItemById(itemId);
+        Item updatedItem = ItemMapper.mapItemUpdateDtoToItemFields(existingItem, itemUpdateDto);
+        Item savedItem = itemRepository.updateItemById(itemId, updatedItem, userId);
+        return ItemMapper.mapItemToDto(savedItem);
     }
 
     @Override

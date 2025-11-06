@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user.dto;
 
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
@@ -22,7 +21,8 @@ public class UserMapper {
                 .build();
     }
 
-    public static User mapToUserFields(@Valid User user, UserUpdateDto userUpdateDto) {
+    public static User mapToUserFields(User user, UserUpdateDto userUpdateDto) {
+
         if (userUpdateDto.hasName()) {
             user.setName(userUpdateDto.getName());
         }

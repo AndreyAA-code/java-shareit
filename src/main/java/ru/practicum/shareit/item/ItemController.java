@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -35,18 +37,18 @@ public class ItemController {
     }
 
     @PostMapping()
-    public ItemDto createItem(@Valid @RequestBody Item item,
+    public ItemDto createItem(@Valid @RequestBody ItemCreateDto itemCreateDto,
                               @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("createItem()");
-        return itemService.createItem(item, userId);
+        return itemService.createItem(itemCreateDto, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItemById(@Valid @PathVariable Long itemId,
-                                  @Valid @RequestBody Map<String, Object> updates,
+                                  @Valid @RequestBody ItemUpdateDto itemUpdateDto,
                                   @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("updateItemById()");
-        return itemService.updateItemById(itemId, updates, userId);
+        return itemService.updateItemById(itemId, itemUpdateDto, userId);
     }
 
     @GetMapping ("/search")

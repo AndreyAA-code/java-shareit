@@ -18,4 +18,24 @@ public class ItemMapper {
                 .request(item.getRequest())
                 .build();
     }
+    public static Item mapItemDtoToItem(ItemCreateDto itemCreateDto) {
+        return Item.builder()
+                .name(itemCreateDto.getName())
+                .description(itemCreateDto.getDescription())
+                .ownerId(itemCreateDto.getOwnerId())
+                .available(itemCreateDto.getAvailable())
+                .build();
+    }
+    public static Item mapItemUpdateDtoToItemFields(Item item,ItemUpdateDto itemUpdateDto) {
+        if (itemUpdateDto.hasName()) {
+            item.setName(itemUpdateDto.getName());
+        }
+        if (itemUpdateDto.hasDescription()) {
+            item.setDescription(itemUpdateDto.getDescription());
+        }
+        if (itemUpdateDto.hasAvailable()) {
+            item.setAvailable(itemUpdateDto.getAvailable());
+        }
+        return item;
+    }
 }

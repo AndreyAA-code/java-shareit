@@ -23,7 +23,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping ("") //УБРАТЬ ""
+    @GetMapping ()
     public Collection<UserDto> getUsers() {
         log.info("getUsers");
         return userService.getUsers();
@@ -35,14 +35,15 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
-    @PostMapping("") //УБРАТЬ ""
+    @PostMapping()
     public UserDto createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         log.info("createUser");
         return userService.createUser(userCreateDto);
     }
 
     @PatchMapping ("/{userId}")
-    public UserDto updateUser(@Valid @PathVariable ("userId") Long userId, @RequestBody UserUpdateDto userUpdateDto) {
+    public UserDto updateUser(@Valid @PathVariable ("userId") Long userId,
+                              @RequestBody UserUpdateDto userUpdateDto) {
         log.info("patch User {}",userId);
         return userService.updateUser(userId, userUpdateDto);
     }

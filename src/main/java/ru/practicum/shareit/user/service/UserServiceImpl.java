@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -35,10 +37,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(@Valid Long userId, @Valid UserUpdateDto userUpdateDto) {
-        User updatedUser = userRepository.getUserById(userId);
-        UserMapper.mapToUserFields(updatedUser,userUpdateDto);
-        return UserMapper.mapToUserDto(userRepository.updateUser(userId, updatedUser));
+    public UserDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
+        User existingUser = userRepository.getUserById(userId);
+        User updatedUser = UserMapper.mapToUserFields(existingUser, userUpdateDto);
+        User savedUser = userRepository.updateUser(userId, updatedUser);
+        return UserMapper.mapToUserDto(savedUser);
     }
 
 

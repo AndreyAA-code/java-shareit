@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.service;
 
 
+import jakarta.validation.Valid;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,9 +15,9 @@ public interface ItemService {
 
     ItemDto getItemById(Long itemId);
 
-    ItemDto createItem(Item item, Long userId);
+    ItemDto createItem(ItemCreateDto itemCreateDto, Long userId);
 
-    ItemDto updateItemById(Long itemId, Map<String, Object> updates, Long userId);
+    ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId);
 
     Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId);
 

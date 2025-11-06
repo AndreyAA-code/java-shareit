@@ -44,32 +44,12 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Item updateItemById(Long itemId, Map<String, Object> updates, Long userId) {
+    public Item updateItemById(Long itemId, Item item, Long userId) {
         checkItemById(itemId);
         if (!items.get(itemId).getOwnerId().equals(userId)) {
             throw new NotFoundException("Нет прав на просмотр. Владелец вещи в запросе не соответствует реальному");
         }
-        Item updatedItem = items.get(itemId);
-
-        log.info("updateItemById({})", itemId);
-/*
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "name":
-                    items.get(itemId).setName((String) value);
-                    break;
-                case "description":
-                    items.get(itemId).setDescription((String) value);
-                    break;
-                    case "available":
-                        items.get(itemId).setAvailable((boolean) value);
-                        break;
-                default:
-                    throw new NotFoundException("такого поля у Item нет");
-            }
-        }); */
-
-        return updatedItem;
+        return items.put(itemId, item);
     }
 
     @Override

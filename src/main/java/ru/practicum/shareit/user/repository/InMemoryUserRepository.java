@@ -27,7 +27,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User create(User user) {
-        checkIfEmailExists(user.getEmail());
+        checkIfEmailExists(user);
         user.setId(getNextId());
         users.put(user.getId(), user);
         log.info("Created user with id {}.", user.getId());
@@ -36,15 +36,11 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User updateUser(Long userId, User user) {
-        checkIfIdExists(userId);
-        User newUser = users.get(userId);
-      //  if (!(user.getEmail() == null)) {
-       //     checkIfEmailExists(user.getEmail());
-       //     newUser.setEmail(user.getEmail());
-      //  }
-       // newUser.setName(user.getName());
-        log.info("Updated user with id {}.", newUser.getId());
-        return newUser;
+       checkIfIdExists(userId);
+       checkIfEmailExists(user);
+       users.put(userId, user);
+        log.info("Updated user with id {}.", userId);
+        return user;
     }
 
     @Override
@@ -57,6 +53,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User getUserById(Long userId) {
         checkIfIdExists(userId);
+        //checkIfEmailExists(User user);
         log.info("Get user with id {}.", userId);
         return users.get(userId);
     }
@@ -71,12 +68,13 @@ public class InMemoryUserRepository implements UserRepository {
         return ++maxId;
     }
 
-    private void checkIfEmailExists(String email) {
+    private void checkIfEmailExists(User userNewEmail) {
         if (users.values()
                 .stream()
+                .filter(user -> !user.getId().equals(userNewEmail.getId()))
                 .map(User::getEmail)
-                .anyMatch(email::equals)) {
-            throw new EmailAlreadyExistsException("Email " + email + " уже существует");
+                .anyMatch(userNewEmail.getEmail()::equals)) {
+            throw new EmailAlreadyExistsException("Email " + userNewEmail.getEmail() + " уже существует");
         }
     }
 
