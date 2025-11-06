@@ -38,11 +38,11 @@ public class InMemoryUserRepository implements UserRepository {
     public User updateUser(Long userId, User user) {
         checkIfIdExists(userId);
         User newUser = users.get(userId);
-        if (!(user.getEmail() == null)) {
-            checkIfEmailExists(user.getEmail());
-            newUser.setEmail(user.getEmail());
-        }
-        newUser.setName(user.getName());
+      //  if (!(user.getEmail() == null)) {
+       //     checkIfEmailExists(user.getEmail());
+       //     newUser.setEmail(user.getEmail());
+      //  }
+       // newUser.setName(user.getName());
         log.info("Updated user with id {}.", newUser.getId());
         return newUser;
     }

@@ -52,7 +52,7 @@ public class InMemoryItemRepository implements ItemRepository {
         Item updatedItem = items.get(itemId);
 
         log.info("updateItemById({})", itemId);
-
+/*
         updates.forEach((key, value) -> {
             switch (key) {
                 case "name":
@@ -67,7 +67,7 @@ public class InMemoryItemRepository implements ItemRepository {
                 default:
                     throw new NotFoundException("такого поля у Item нет");
             }
-        });
+        }); */
 
         return updatedItem;
     }

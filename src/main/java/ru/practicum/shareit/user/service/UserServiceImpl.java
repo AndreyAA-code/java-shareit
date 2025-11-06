@@ -36,11 +36,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(@Valid Long userId, @Valid UserUpdateDto userUpdateDto) {
-        User updatedUser = UserMapper.mapToUserFields();
+        User updatedUser = userRepository.getUserById(userId);
+        UserMapper.mapToUserFields(updatedUser,userUpdateDto);
         return UserMapper.mapToUserDto(userRepository.updateUser(userId, updatedUser));
     }
 
-    }
+
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteUser(userId);
