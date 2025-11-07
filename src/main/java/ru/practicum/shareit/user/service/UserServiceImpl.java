@@ -40,8 +40,7 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
         User existingUser = userRepository.getUserById(userId);
         User updatedUser = UserMapper.mapToUserFields(existingUser, userUpdateDto);
-        User savedUser = userRepository.updateUser(userId, updatedUser);
-        return UserMapper.mapToUserDto(savedUser);
+        return UserMapper.mapToUserDto(userRepository.updateUser(userId, updatedUser));
     }
 
 

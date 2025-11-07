@@ -6,11 +6,8 @@ import lombok.Data;
 
 @Data
 public class ItemUpdateDto {
-    @NotBlank
     private String name;
-    @NotBlank
     private String description;
-    @NotNull
     private Boolean available;
 
     public boolean hasName() {
@@ -20,6 +17,6 @@ public class ItemUpdateDto {
         return ! (description == null || description.isBlank());
     }
     public boolean hasAvailable() {
-        return available;
+        return ! (available == null);
     }
 }

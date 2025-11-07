@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 public class InMemoryUserRepository implements UserRepository {
-    private Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public Collection<User> getUsers() {

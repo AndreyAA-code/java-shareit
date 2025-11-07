@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    private ItemRepository itemRepository;
-    private UserRepository userRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Collection<ItemDto> getItems(Long userId) {
@@ -51,12 +51,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId) {
-        userRepository.getUserById(userId);
-        log.info("updateItemById({})", itemId);
         Item existingItem = itemRepository.getItemById(itemId);
         Item updatedItem = ItemMapper.mapItemUpdateDtoToItemFields(existingItem, itemUpdateDto);
-        Item savedItem = itemRepository.updateItemById(itemId, updatedItem, userId);
-        return ItemMapper.mapItemToDto(savedItem);
+        return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, updatedItem, userId));
     }
 
     @Override

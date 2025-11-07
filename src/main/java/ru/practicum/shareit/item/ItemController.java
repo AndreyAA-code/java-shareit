@@ -7,11 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * TODO Sprint add-controllers.
@@ -26,7 +23,7 @@ public class ItemController {
 
     @GetMapping()
     public Collection<ItemDto> getItems(@RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
-        log.info("getItems() for user {}", userId);
+        log.info("getItems for user {}", userId);
         return itemService.getItems(userId);
     }
 
