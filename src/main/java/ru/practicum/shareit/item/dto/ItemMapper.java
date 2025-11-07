@@ -18,6 +18,7 @@ public class ItemMapper {
                 .request(item.getRequest())
                 .build();
     }
+
     public static Item mapItemDtoToItem(ItemCreateDto itemCreateDto) {
         return Item.builder()
                 .name(itemCreateDto.getName())
@@ -26,7 +27,8 @@ public class ItemMapper {
                 .available(itemCreateDto.getAvailable())
                 .build();
     }
-    public static Item mapItemUpdateDtoToItemFields(Item item,ItemUpdateDto itemUpdateDto) {
+
+    public static Item mapItemUpdateDtoToItemFields(Item item, ItemUpdateDto itemUpdateDto) {
         if (itemUpdateDto.hasName()) {
             item.setName(itemUpdateDto.getName());
         }
