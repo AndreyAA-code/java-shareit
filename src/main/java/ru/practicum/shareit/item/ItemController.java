@@ -10,15 +10,11 @@ import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 import java.util.Collection;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @AllArgsConstructor
 @Slf4j
 public class ItemController {
-
     ItemService itemService;
 
     @GetMapping()
@@ -40,7 +36,7 @@ public class ItemController {
         return itemService.createItem(itemCreateDto, userId);
     }
 
-/*    @PatchMapping("/{itemId}")
+    @PatchMapping("/{itemId}")
     public ItemDto updateItemById(@Valid @PathVariable Long itemId,
                                   @Valid @RequestBody ItemUpdateDto itemUpdateDto,
                                   @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {

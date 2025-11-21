@@ -14,6 +14,7 @@ import ru.practicum.shareit.user.model.User;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +33,5 @@ public class Item {
     @NotNull
     private Boolean available;
     private String request;
+
 }

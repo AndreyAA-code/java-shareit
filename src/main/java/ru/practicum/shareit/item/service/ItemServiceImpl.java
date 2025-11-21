@@ -3,12 +3,14 @@ package ru.practicum.shareit.item.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
@@ -34,22 +36,32 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemById(Long itemId) {
         log.info("getItemById({})", itemId);
-        return ItemMapper.mapItemToDto(itemRepository.getItemById(itemId));
+        return ItemMapper.mapItemToDto(itemRepository.getItemById(itemId)
+        .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist")));
     }
 
     @Override
     public ItemDto createItem(ItemCreateDto itemCreateDto, Long userId) {
-        userRepository.getUserById(userId);
+        User owner = userRepository.getUserById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
         log.info("createItem({})", itemCreateDto);
         Item item = ItemMapper.mapItemDtoToItem(itemCreateDto);
-        return ItemMapper.mapItemToDto(itemRepository.save(item, userId));
+        item.setUser(owner);
+        return ItemMapper.mapItemToDto(itemRepository.save(item));
     }
-/*
+
     @Override
     public ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId) {
-        Item existingItem = itemRepository.getItemById(itemId);
+        Item existingItem = itemRepository.getItemById(itemId)
+                .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
+        log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         Item updatedItem = ItemMapper.mapItemUpdateDtoToItemFields(existingItem, itemUpdateDto);
-        return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, updatedItem, userId));
+        log.info("updateItemById({}, {})", itemId, itemUpdateDto);
+        updatedItem.setUser(existingItem.getUser());
+        log.info("updateItemById({}, {})", itemId, itemUpdateDto);
+        updatedItem.setId(itemId);
+        log.info("updateItemById({}, {})", itemId, itemUpdateDto);
+        return ItemMapper.mapItemToDto(itemRepository.save(updatedItem));
     }
 /*
     @Override

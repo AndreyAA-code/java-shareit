@@ -23,7 +23,6 @@ public class ItemMapper {
         return Item.builder()
                 .name(itemCreateDto.getName())
                 .description(itemCreateDto.getDescription())
-              //  .user(itemCreateDto.getOwnerId())
                 .available(itemCreateDto.getAvailable())
                 .build();
     }

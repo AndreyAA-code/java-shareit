@@ -11,7 +11,6 @@ public class ItemCreateDto {
         private String name;
         @NotBlank
         private String description;
-        private Long ownerId;
         @NotNull
         private Boolean available;
 }
