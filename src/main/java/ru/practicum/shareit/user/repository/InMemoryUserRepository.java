@@ -15,17 +15,17 @@ import java.util.stream.Collectors;
 @Repository
 @Primary
 @Slf4j
-public class InMemoryUserRepository implements UserRepository {
+public class InMemoryUserRepository {
     private final Map<Long, User> users = new HashMap<>();
 
-    @Override
+    //@Override
     public Collection<User> getUsers() {
         return users.values()
                 .stream()
                 .collect(Collectors.toList());
     }
 
-    @Override
+   // @Override
     public User create(User user) {
         checkIfEmailExists(user);
         user.setId(getNextId());
@@ -34,7 +34,7 @@ public class InMemoryUserRepository implements UserRepository {
         return user;
     }
 
-    @Override
+  //  @Override
     public User updateUser(Long userId, User user) {
        checkIfIdExists(userId);
        checkIfEmailExists(user);
@@ -43,14 +43,14 @@ public class InMemoryUserRepository implements UserRepository {
         return user;
     }
 
-    @Override
+  //  @Override
     public void deleteUser(Long userId) {
         checkIfIdExists(userId);
         users.remove(userId);
         log.info("Deleted user with id {}.", userId);
     }
 
-    @Override
+ //   @Override
     public User getUserById(Long userId) {
         checkIfIdExists(userId);
         //checkIfEmailExists(User user);

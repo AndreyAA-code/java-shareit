@@ -40,18 +40,18 @@ public class ItemController {
         return itemService.createItem(itemCreateDto, userId);
     }
 
-    @PatchMapping("/{itemId}")
+/*    @PatchMapping("/{itemId}")
     public ItemDto updateItemById(@Valid @PathVariable Long itemId,
                                   @Valid @RequestBody ItemUpdateDto itemUpdateDto,
                                   @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         log.info("updateItemById()");
         return itemService.updateItemById(itemId, itemUpdateDto, userId);
     }
-
+/*
     @GetMapping ("/search")
     public Collection<ItemDto> searchAvailableItems(@RequestParam String text,
                                                     @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
         return itemService.searchItemsByNameAndDescription(text, userId);
-    }
+    } */
 
 }

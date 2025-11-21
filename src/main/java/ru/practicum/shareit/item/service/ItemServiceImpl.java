@@ -25,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemDto> getItems(Long userId) {
         log.info("getItems()");
-        return itemRepository.getItems(userId)
+        return itemRepository.findByUserId(userId)
                 .stream()
                 .map(ItemMapper::mapItemToDto)
                 .collect(Collectors.toList());
@@ -42,21 +42,21 @@ public class ItemServiceImpl implements ItemService {
         userRepository.getUserById(userId);
         log.info("createItem({})", itemCreateDto);
         Item item = ItemMapper.mapItemDtoToItem(itemCreateDto);
-        return ItemMapper.mapItemToDto(itemRepository.createItem(item, userId));
+        return ItemMapper.mapItemToDto(itemRepository.save(item, userId));
     }
-
+/*
     @Override
     public ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId) {
         Item existingItem = itemRepository.getItemById(itemId);
         Item updatedItem = ItemMapper.mapItemUpdateDtoToItemFields(existingItem, itemUpdateDto);
         return ItemMapper.mapItemToDto(itemRepository.updateItemById(itemId, updatedItem, userId));
     }
-
+/*
     @Override
     public Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId) {
-        return itemRepository.searchItemsByNameAndDescription(descr, userId)
+        return itemRepository.searchItemsByNameAndDescription(userId, descr)
                 .stream()
                 .map(ItemMapper::mapItemToDto)
                 .collect(Collectors.toList());
-    }
+    } */
 }

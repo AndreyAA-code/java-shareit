@@ -15,8 +15,8 @@ public interface ItemService {
 
     ItemDto createItem(ItemCreateDto itemCreateDto, Long userId);
 
-    ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId);
+    //ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId);
 
-    Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId);
+   // Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId);
 
 }
