@@ -7,9 +7,6 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.sql.Timestamp;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Data
 @Builder
 public class BookingDto {
