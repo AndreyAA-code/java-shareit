@@ -54,6 +54,9 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId) {
         Item existingItem = itemRepository.getItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
+        if (!existingItem.getUser().getId().equals(userId)) {
+            throw new NotFoundException("Нет прав на просмотр. Владелец вещи в запросе не соответствует реальному");
+        }
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         Item updatedItem = ItemMapper.mapItemUpdateDtoToItemFields(existingItem, itemUpdateDto);
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);
@@ -63,12 +66,12 @@ public class ItemServiceImpl implements ItemService {
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         return ItemMapper.mapItemToDto(itemRepository.save(updatedItem));
     }
-/*
+
     @Override
     public Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId) {
-        return itemRepository.searchItemsByNameAndDescription(userId, descr)
+        return itemRepository.searchItemsByNameAndDescription(descr, userId)
                 .stream()
                 .map(ItemMapper::mapItemToDto)
                 .collect(Collectors.toList());
-    } */
+    }
 }

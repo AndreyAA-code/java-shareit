@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
@@ -15,8 +16,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Item save(Item item);
 
-  //  Item updateItemById(Long itemId, Item item, Long userId);
-
-    // Collection<Item> searchItemsByNameAndDescription(Long userId, String descr);
+    @Query("SELECT i FROM Item i WHERE i.available = true AND" +
+            "(LOWER(i.name) LIKE LOWER(CONCAT('%', ?1, '%')) OR " +
+            "LOWER(i.description) LIKE LOWER(CONCAT('%', ?1, '%'))) AND " +
+            "i.user.id = ?2")
+    List<Item> searchItemsByNameAndDescription(String descr,Long userId);
 
 }
