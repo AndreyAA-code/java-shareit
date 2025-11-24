@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exceptions;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -33,6 +34,13 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingRequestHeader(MissingRequestHeaderException ex) {
         String message = "В запросе отсутствует указание на владельца Item";
+        return new ErrorResponse("Validation Failed: " + message);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequest(BadRequestException ex) {
+        String message = "В запросе дата начала бронирования позже даты окончания";
         return new ErrorResponse("Validation Failed: " + message);
     }
 }

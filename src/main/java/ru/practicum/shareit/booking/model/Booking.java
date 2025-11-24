@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +11,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name ="bookings")
@@ -21,11 +24,13 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @Column(name="start_date")
-    private Timestamp start;
+    private LocalDateTime start;
 
+    @NotNull
     @Column(name="end_date")
-    private Timestamp end;
+    private LocalDateTime end;
 
     @JoinColumn(name ="item_id")
     @ManyToOne(fetch = FetchType.LAZY)

@@ -7,10 +7,9 @@ import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.Optional;
 
-@Service
 public interface BookingService {
 
-    BookingDto save(BookingCreateDto booking, Long userId);
+    BookingDto createBooking(BookingCreateDto bookingCreateDto, Long userId);
 
     BookingDto findById(Long bookingId);
 }

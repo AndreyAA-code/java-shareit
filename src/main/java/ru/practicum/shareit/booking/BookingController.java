@@ -11,17 +11,17 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 
 @RestController
-@RequestMapping(path = "/bookings")
+@RequestMapping("/bookings")
 @AllArgsConstructor
 @Slf4j
 public class BookingController {
-    private final BookingService bookingService;
+    BookingService bookingService;  //добавить модификатор!!!!
 
     @PostMapping
-    public BookingDto createBooking(@RequestBody BookingCreateDto bookingCreateDto,
-                                          @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
-        log.info("!!!!!Create booking: {}", bookingCreateDto);
-        return bookingService.save(bookingCreateDto, userId);
+    public BookingDto createBooking(@Valid @RequestBody BookingCreateDto bookingCreateDto,
+                                    @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
+        log.info("!!!!!Create booking: {} and booker {}", bookingCreateDto, userId);
+        return bookingService.createBooking(bookingCreateDto, userId);
     }
 
     @PatchMapping("/{bookingId}")
