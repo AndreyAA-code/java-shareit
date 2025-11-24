@@ -1,12 +1,10 @@
 package ru.practicum.shareit.booking.service;
 
-import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookingService {
 
@@ -17,4 +15,7 @@ public interface BookingService {
     BookingDto findBookingById(Long bookingId, Long userId);
 
     List<BookingDto> findAllBookings();
+
+    List<BookingDto> findAllBookings(Long userId, BookingState bookingState);
+
 }

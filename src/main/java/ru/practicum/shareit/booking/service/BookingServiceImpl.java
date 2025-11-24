@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NoRightsException;
@@ -20,8 +21,11 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -89,6 +93,37 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookings() {
         return List.of();
+    }
+
+    @Override
+    public List<BookingDto> findAllBookings(Long userId, BookingState bookingState) {
+        User booker = userRepository.getUserById(userId)
+                .orElseThrow(() -> new NotFoundException("Booker not found with id: " + userId));
+        List<Booking> bookings = new ArrayList<>();
+
+        switch (bookingState) {
+            case All:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                break;
+            case CURRENT:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                break;
+            case PAST:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                break;
+            case FUTURE:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                break;
+            case WAITING:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                break;
+            case REJECTED:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                break;
+        }
+        return bookings.stream()
+                .map(BookingMapper::mapBookingToBookingDto)
+                .collect(Collectors.toList());
     }
 
 }
