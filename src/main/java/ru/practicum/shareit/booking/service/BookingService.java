@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface BookingService {
 
+    BookingDto approve(Long userId, Long bookingId, Boolean approved);
+
     BookingDto createBooking(BookingCreateDto bookingCreateDto, Long userId);
 
     BookingDto findBookingById(Long bookingId, Long userId);

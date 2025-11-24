@@ -11,7 +11,9 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exceptions.NoRightsException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exceptions.StatusException;
 import ru.practicum.shareit.exceptions.UnavailableItemException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -30,11 +32,32 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
     @Override
+    public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("booking not found"));
+        Item item = booking.getItem();
+        if (!userId.equals(item.getUser().getId())) {
+            throw new NoRightsException("User doesn't have sufficient rights");
+        }
+        if (booking.getBookingStatus().equals(BookingStatus.APPROVED)
+                || booking.getBookingStatus().equals(BookingStatus.REJECTED)) {
+            throw new StatusException("status already set");
+        }
+        if (approved) {
+            booking.setBookingStatus(BookingStatus.APPROVED);
+        } else {
+            booking.setBookingStatus(BookingStatus.REJECTED);
+        }
+        booking = bookingRepository.save(booking);
+        return BookingMapper.mapBookingToBookingDto(booking);
+    }
+
+    @Override
     public BookingDto createBooking(BookingCreateDto bookingCreateDto, Long userId) {
         Item item = itemRepository.getItemById(bookingCreateDto.getItemId())
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + bookingCreateDto.getItemId()));
+                .orElseThrow(() -> new NotFoundException("Item not found with id: " + bookingCreateDto.getItemId()));
         User booker = userRepository.getUserById(userId)
-                .orElseThrow(() -> new RuntimeException("Booker not found with id: " + userId));
+                .orElseThrow(() -> new NotFoundException("Booker not found with id: " + userId));
         if (bookingCreateDto.getEnd().isBefore(bookingCreateDto.getStart())) {
             throw new RuntimeException("End time is before start time");
         }
@@ -53,6 +76,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findBookingById(Long bookingId, Long userId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("booking not found"));
+        Item item = booking.getItem();
+        if (!userId.equals(item.getUser().getId()) && !userId.equals(booking.getBooker().getId())) {
+            throw new NotFoundException("user not found");
+        }
         return BookingMapper.mapBookingToBookingDto(bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found with id: " + bookingId)));
     }

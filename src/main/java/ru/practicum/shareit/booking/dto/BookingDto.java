@@ -18,7 +18,7 @@ public class BookingDto {
     private Long id;
     private LocalDateTime start;
     private LocalDateTime end;
-    private BookingItemDto item;
-    private BookingUserDto booker;
+    private BookingItemDto item; //по идее в репозитории надо было через @Query, так хуже и сложнее?
+    private BookingUserDto booker; //по идее в репозитории надо было через @Query, так хуже и сложнее?
     private BookingStatus status;
 }

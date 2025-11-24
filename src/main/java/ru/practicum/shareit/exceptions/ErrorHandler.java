@@ -43,4 +43,16 @@ public class ErrorHandler {
         String message = "В запросе дата начала бронирования позже даты окончания";
         return new ErrorResponse("Validation Failed: " + message);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequest(Exception ex) {
+        return new ErrorResponse("Validation Failed: " + ex.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleNoRights(NoRightsException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
 }
