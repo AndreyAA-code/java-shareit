@@ -18,6 +18,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,8 +52,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto findById(Long bookingId) {
+    public BookingDto findBookingById(Long bookingId, Long userId) {
         return BookingMapper.mapBookingToBookingDto(bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Item with id: " + bookingId + "doesn't exist")));
+                .orElseThrow(() -> new NotFoundException("Booking not found with id: " + bookingId)));
     }
+
+    @Override
+    public List<BookingDto> findAllBookings() {
+        return List.of();
+    }
+
 }
