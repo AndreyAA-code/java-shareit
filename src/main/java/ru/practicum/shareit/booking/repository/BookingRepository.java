@@ -1,9 +1,16 @@
 package ru.practicum.shareit.booking.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 
-public class BookingRepository extends JpaRepository<Booking, Long> {
+import java.util.Optional;
+
+@Repository
+public interface BookingRepository extends JpaRepository<Booking, Long> {
+
+    Booking save(Booking booking);
+
+    Optional<Booking> findById(Long bookingId);
 
 }
