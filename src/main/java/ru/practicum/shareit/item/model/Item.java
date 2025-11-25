@@ -28,7 +28,7 @@ public class Item {
 
     @JoinColumn(name = "owner_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private User owner;
 
     @NotNull
     private Boolean available;

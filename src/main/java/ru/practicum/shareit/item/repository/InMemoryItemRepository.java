@@ -22,7 +22,7 @@ public class InMemoryItemRepository {
         log.info("getItems by userId = {}", userId);
         return items.values()
                 .stream()
-                .filter(item -> item.getUser().getId().equals(userId))
+                .filter(item -> item.getOwner().getId().equals(userId))
                 .collect(Collectors.toList());
     }
 
@@ -36,7 +36,7 @@ public class InMemoryItemRepository {
     public Item createItem(Item item, Long userId) {
         log.info("createItem({})", item);
         item.setId(getNextId());
-        item.setUser(item.getUser());
+        item.setOwner(item.getOwner());
         items.put(item.getId(), item);
         log.info("created Item({})", item);
         return item;
@@ -45,7 +45,7 @@ public class InMemoryItemRepository {
  //   @Override
     public Item updateItemById(Long itemId, Item item, Long userId) {
         checkItemById(itemId);
-        if (!items.get(itemId).getUser().getId().equals(userId)) {
+        if (!items.get(itemId).getOwner().getId().equals(userId)) {
             throw new NotFoundException("Нет прав на просмотр. Владелец вещи в запросе не соответствует реальному");
         }
         return items.put(itemId, item);
@@ -60,7 +60,7 @@ public class InMemoryItemRepository {
         String searchText = descr.toLowerCase();
        return items.values().stream()
                .filter(item -> item.getAvailable() == true
-               || !item.getUser().getId().equals(userId))
+               || !item.getOwner().getId().equals(userId))
                 .filter(item -> item.getDescription().toLowerCase().contains(searchText)
                         || item.getName().toLowerCase().contains(searchText))
                 .collect(Collectors.toList());

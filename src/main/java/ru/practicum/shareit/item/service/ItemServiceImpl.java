@@ -27,7 +27,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemDto> getItems(Long userId) {
         log.info("getItems()");
-        return itemRepository.findByUserId(userId)
+        return itemRepository.findByOwner_Id(userId)
                 .stream()
                 .map(ItemMapper::mapItemToDto)
                 .collect(Collectors.toList());
@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
         log.info("createItem({})", itemCreateDto);
         Item item = ItemMapper.mapItemDtoToItem(itemCreateDto);
-        item.setUser(owner);
+        item.setOwner(owner);
         return ItemMapper.mapItemToDto(itemRepository.save(item));
     }
 
@@ -54,13 +54,13 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId) {
         Item existingItem = itemRepository.getItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
-        if (!existingItem.getUser().getId().equals(userId)) {
+        if (!existingItem.getOwner().getId().equals(userId)) {
             throw new NotFoundException("Нет прав на просмотр. Владелец вещи в запросе не соответствует реальному");
         }
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         Item updatedItem = ItemMapper.mapItemUpdateDtoToItemFields(existingItem, itemUpdateDto);
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);
-        updatedItem.setUser(existingItem.getUser());
+        updatedItem.setOwner(existingItem.getOwner());
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         updatedItem.setId(itemId);
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);

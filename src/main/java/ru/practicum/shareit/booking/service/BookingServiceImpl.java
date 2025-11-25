@@ -23,10 +23,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +39,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("booking not found"));
         Item item = booking.getItem();
-        if (!userId.equals(item.getUser().getId())) {
+        if (!userId.equals(item.getOwner().getId())) {
             throw new NoRightsException("User doesn't have sufficient rights");
         }
         if (booking.getBookingStatus().equals(BookingStatus.APPROVED)
@@ -70,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()){
             throw new UnavailableItemException("Item is not available");
         }
-        if (booker.equals(item.getUser())) {
+        if (booker.equals(item.getOwner())) {
             throw new RuntimeException("Booker not allowed to book");
         }
         Booking booking = BookingMapper.mapBookingCreateDtoToBooking(bookingCreateDto);
@@ -85,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("booking not found"));
         Item item = booking.getItem();
-        if (!userId.equals(item.getUser().getId()) && !userId.equals(booking.getBooker().getId())) {
+        if (!userId.equals(item.getOwner().getId()) && !userId.equals(booking.getBooker().getId())) {
             throw new NotFoundException("user not found");
         }
         return BookingMapper.mapBookingToBookingDto(bookingRepository.findById(bookingId)
@@ -125,7 +122,42 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getByOwner(Long userId, BookingState bookingState) {
-        return List.of();
+        User owner = userRepository.getUserById(userId)
+                .orElseThrow(() -> new NotFoundException("Owner not found with id: " + userId));
+        List<Item> ownerItems = itemRepository.findByOwner_Id(userId);
+        if (ownerItems.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Long> itemIds = ownerItems
+                .stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
+
+        List <Booking> bookings = new ArrayList<>();
+        switch (bookingState) {
+            case ALL:
+                bookings = bookingRepository.findAllByItemInOrderByStartDesc(itemIds);
+                break;
+            case CURRENT:
+                bookings = bookingRepository.findAllByItemInAndEndIsAfterAndStartIsBeforeOrderByStartDesc(itemIds, LocalDateTime.now(), LocalDateTime.now());
+                break;
+            case PAST:
+                bookings = bookingRepository.findAllByItemInAndEndIsBeforeOrderByStartDesc(itemIds, LocalDateTime.now());
+                break;
+            case FUTURE:
+                bookings = bookingRepository.findAllByItemInAndStartIsAfterOrderByStartDesc(itemIds, LocalDateTime.now());
+                break;
+            case WAITING:
+                bookings = bookingRepository.findAllByItemInAndBookingStatus(itemIds, BookingStatus.WAITING);
+                break;
+            case REJECTED:
+                bookings = bookingRepository.findAllByItemInAndBookingStatus(itemIds, BookingStatus.REJECTED);
+                break;
+        }
+        return bookings.stream()
+                .map(BookingMapper::mapBookingToBookingDto)
+                .collect(Collectors.toList());
     }
 
 }

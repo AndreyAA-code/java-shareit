@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    List<Item> findByUserId(Long userId);
+    List<Item> findByOwner_Id(Long userId);
 
     Optional<Item> getItemById(Long itemId);
 
@@ -19,7 +19,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT i FROM Item i WHERE i.available = true AND" +
             "(LOWER(i.name) LIKE LOWER(CONCAT('%', ?1, '%')) OR " +
             "LOWER(i.description) LIKE LOWER(CONCAT('%', ?1, '%'))) AND " +
-            "i.user.id = ?2")
+            "i.owner.id = ?2")
     List<Item> searchItemsByNameAndDescription(String descr,Long userId);
 
 }
