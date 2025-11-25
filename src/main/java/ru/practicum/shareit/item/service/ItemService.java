@@ -22,5 +22,5 @@ public interface ItemService {
 
     Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId);
 
-    CommentDto addComment(@Valid Long itemId, Long userId, Comment comment);
+    CommentDto addComment(@Valid Long itemId, Long userId, CommentDto commentDto);
 }
