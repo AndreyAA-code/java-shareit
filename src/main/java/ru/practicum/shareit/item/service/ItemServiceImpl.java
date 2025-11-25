@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemCreateDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -23,6 +22,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public Collection<ItemDto> getItems(Long userId) {
@@ -73,5 +73,10 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(ItemMapper::mapItemToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto addComment(Long itemId, Long userId, Comment comment) {
+        return CommentMapper.mapCommentToCommentDto(commentRepository.save(comment));
     }
 }
