@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = ShareItApp.class)
 @ActiveProfiles("test")
 class ShareItTests {
 
