@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.dto.comment.CommentDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data

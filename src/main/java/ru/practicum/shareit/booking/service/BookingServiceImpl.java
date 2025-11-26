@@ -1,9 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
-import jakarta.servlet.UnavailableException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -21,7 +19,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,7 +61,7 @@ public class BookingServiceImpl implements BookingService {
         if (bookingCreateDto.getEnd().isBefore(bookingCreateDto.getStart())) {
             throw new RuntimeException("End time is before start time");
         }
-        if (!item.getAvailable()){
+        if (!item.getAvailable()) {
             throw new UnavailableItemException("Item is not available");
         }
         if (booker.equals(item.getOwner())) {
@@ -134,7 +131,7 @@ public class BookingServiceImpl implements BookingService {
                 .map(Item::getId)
                 .collect(Collectors.toList());
 
-        List <Booking> bookings = new ArrayList<>();
+        List<Booking> bookings = new ArrayList<>();
         switch (bookingState) {
             case ALL:
                 bookings = bookingRepository.findAllByItemInOrderByStartDesc(itemIds);
