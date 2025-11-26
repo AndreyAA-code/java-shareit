@@ -1,15 +1,15 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.dto.item;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
 
-/**
- * TODO Sprint add-controllers.
- */
+import java.util.List;
+
 @Data
 @Builder
-public class ItemDto {
+public class ItemCommentsDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
     private String name;
@@ -17,4 +17,5 @@ public class ItemDto {
     private Long ownerId;
     private Boolean available;
     private String request;
+    private List<CommentDto> comments;
 }

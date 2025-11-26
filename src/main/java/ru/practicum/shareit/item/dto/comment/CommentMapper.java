@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.dto.comment;
 
 import org.hibernate.Hibernate;
 import ru.practicum.shareit.item.model.Comment;
@@ -14,7 +14,7 @@ public class CommentMapper {
                 .id(comment.getId())
                 .text(comment.getText())
                 .item(mapToCommentItemDto(comment.getItem()))
-                .author(mapToCommentUserDto(comment.getAuthor()))
+                .authorName(comment.getAuthor().getName())
                 .created(comment.getCreated())
                 .build();
     }

@@ -55,4 +55,10 @@ public class ErrorHandler {
     public ErrorResponse handleNoRights(NoRightsException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotAcceptable(NotAcceptableException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
 }

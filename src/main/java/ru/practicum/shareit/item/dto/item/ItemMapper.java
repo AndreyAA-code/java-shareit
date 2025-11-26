@@ -1,9 +1,12 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.dto.item;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
 import ru.practicum.shareit.item.model.Item;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,4 +42,16 @@ public class ItemMapper {
         }
         return item;
     }
+
+    public static ItemCommentsDto mapItemToItemCommentsDto(Item item, List<CommentDto> commentDtos) {
+        return ItemCommentsDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .ownerId(item.getOwner().getId())
+                .comments(commentDtos)
+                .build();
+    }
+
 }

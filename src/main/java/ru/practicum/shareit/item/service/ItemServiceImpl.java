@@ -4,10 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exceptions.NotAcceptableException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
+import ru.practicum.shareit.item.dto.comment.CommentMapper;
+import ru.practicum.shareit.item.dto.item.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
@@ -17,6 +19,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,12 +42,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Long itemId) {
-        log.info("getItemById({})", itemId);
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item not found"));
-        item.
-        return ItemMapper.mapItemToDto(itemRepository.getItemById(itemId)
-        .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist")));
+    public ItemCommentsDto getItemById(Long itemId, Long userId) {
+        log.info("getItemById({}) by user {}", itemId, userId);
+
+        // Get the item
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + " doesn't exist"));
+
+        // Get comments for the item
+        List<Comment> comments = commentRepository.findByItemId(itemId);
+        List<CommentDto> commentDtos = comments.stream()
+                .map(CommentMapper::mapCommentToCommentDto)
+                .collect(Collectors.toList());
+
+        // Create and return ItemCommentsDto
+        return ItemMapper.mapItemToItemCommentsDto(item, commentDtos);
     }
 
     @Override
@@ -91,7 +103,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
         Boolean isBookingExistsAndFinished = bookingRepository.existsByBookerIdAndItemIdAndEndIsBefore(userId, itemId, LocalDateTime.now());
         if (!isBookingExistsAndFinished) {
-            throw new NotFoundException("Item with id: " + itemId + "doesn't exist");
+            throw new NotAcceptableException("User with id: " + userId + " has no completed booking for item " + itemId);
         }
         Comment comment = new Comment();
         comment.setAuthor(author);
