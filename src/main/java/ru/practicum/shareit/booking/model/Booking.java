@@ -8,16 +8,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name ="bookings")
+@Table(name = "bookings")
 @Data
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class Booking {
+public class Booking{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
