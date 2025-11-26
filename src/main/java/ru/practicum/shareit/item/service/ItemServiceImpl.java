@@ -1,9 +1,12 @@
 package ru.practicum.shareit.item.service;
 
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotAcceptableException;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -20,10 +23,11 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
@@ -42,21 +46,26 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemCommentsDto getItemById(Long itemId, Long userId) {
+    public ItemCommentsLastNextBookingDto getItemById(Long itemId, Long userId) {
         log.info("getItemById({}) by user {}", itemId, userId);
-
-        // Get the item
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + " doesn't exist"));
-
-        // Get comments for the item
         List<Comment> comments = commentRepository.findByItemId(itemId);
         List<CommentDto> commentDtos = comments.stream()
                 .map(CommentMapper::mapCommentToCommentDto)
                 .collect(Collectors.toList());
 
-        // Create and return ItemCommentsDto
-        return ItemMapper.mapItemToItemCommentsDto(item, commentDtos);
+        BookingDto lastBookingDto = null;
+        BookingDto nextBookingDto = null;
+
+        if (item.getOwner().getId().equals(userId)) {
+            Optional<Booking> lastBooking = bookingRepository.findTopByItem_IdAndEndBeforeOrderByEndDesc(itemId, LocalDateTime.now());
+            lastBookingDto = lastBooking.map(BookingMapper::mapBookingToBookingDto).orElse(null);
+
+            Optional<Booking> nextBooking = bookingRepository.findTopByItem_IdAndStartAfterOrderByStartAsc(itemId, LocalDateTime.now());
+            nextBookingDto = nextBooking.map(BookingMapper::mapBookingToBookingDto).orElse(null);
+        }
+        return ItemMapper.mapItemToItemCommentsDto(item, commentDtos, lastBookingDto, nextBookingDto);
     }
 
     @Override
@@ -78,11 +87,8 @@ public class ItemServiceImpl implements ItemService {
         }
         log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         Item updatedItem = ItemMapper.mapItemUpdateDtoToItemFields(existingItem, itemUpdateDto);
-        log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         updatedItem.setOwner(existingItem.getOwner());
-        log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         updatedItem.setId(itemId);
-        log.info("updateItemById({}, {})", itemId, itemUpdateDto);
         return ItemMapper.mapItemToDto(itemRepository.save(updatedItem));
     }
 
@@ -101,7 +107,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
         Item item = itemRepository.getItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
-        Boolean isBookingExistsAndFinished = bookingRepository.existsByBookerIdAndItemIdAndEndIsBefore(userId, itemId, LocalDateTime.now());
+        Boolean isBookingExistsAndFinished = bookingRepository.existsByBookerIdAndItemIdAndEndBefore(userId, itemId, LocalDateTime.now());
         if (!isBookingExistsAndFinished) {
             throw new NotAcceptableException("User with id: " + userId + " has no completed booking for item " + itemId);
         }

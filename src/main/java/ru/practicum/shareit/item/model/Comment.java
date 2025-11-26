@@ -26,5 +26,6 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author")
     private User author;
+    @Builder.Default
     LocalDateTime created = LocalDateTime.now();
 }

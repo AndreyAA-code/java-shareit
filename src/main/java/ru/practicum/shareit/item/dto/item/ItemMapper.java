@@ -3,9 +3,11 @@ package ru.practicum.shareit.item.dto.item;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.dto.comment.CommentDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -43,14 +45,17 @@ public class ItemMapper {
         return item;
     }
 
-    public static ItemCommentsDto mapItemToItemCommentsDto(Item item, List<CommentDto> commentDtos) {
-        return ItemCommentsDto.builder()
+    public static ItemCommentsLastNextBookingDto mapItemToItemCommentsDto(
+            Item item, List<CommentDto> commentDtos, BookingDto lastBooking, BookingDto nextBooking) {
+        return ItemCommentsLastNextBookingDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .ownerId(item.getOwner().getId())
                 .comments(commentDtos)
+                .lastBooking(lastBooking)
+                .nextBooking(nextBooking)
                 .build();
     }
 
