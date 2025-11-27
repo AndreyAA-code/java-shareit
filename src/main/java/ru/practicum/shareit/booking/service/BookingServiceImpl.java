@@ -34,6 +34,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
+
     public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("booking not found"));
@@ -41,14 +42,14 @@ public class BookingServiceImpl implements BookingService {
         if (!userId.equals(item.getOwner().getId())) {
             throw new NoRightsException("User doesn't have sufficient rights");
         }
-        if (booking.getBookingStatus().equals(BookingStatus.APPROVED)
-                || booking.getBookingStatus().equals(BookingStatus.REJECTED)) {
+        if (booking.getStatus().equals(BookingStatus.APPROVED)
+                || booking.getStatus().equals(BookingStatus.REJECTED)) {
             throw new StatusException("status already set");
         }
         if (approved) {
-            booking.setBookingStatus(BookingStatus.APPROVED);
+            booking.setStatus(BookingStatus.APPROVED);
         } else {
-            booking.setBookingStatus(BookingStatus.REJECTED);
+            booking.setStatus(BookingStatus.REJECTED);
         }
         booking = bookingRepository.save(booking);
         return BookingMapper.mapBookingToBookingDto(booking);
@@ -73,7 +74,14 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = BookingMapper.mapBookingCreateDtoToBooking(bookingCreateDto);
         booking.setBooker(booker);
         booking.setItem(item);
-        booking.setBookingStatus(BookingStatus.WAITING);
+        booking.setStatus(BookingStatus.WAITING);
+
+        List<Booking> bookings = bookingRepository.findByItemIdAndStatusAndTimeRange(bookingCreateDto.getItemId(),
+                BookingStatus.APPROVED, bookingCreateDto.getStart(), bookingCreateDto.getEnd());
+        if (!bookings.isEmpty()) {
+            throw new RuntimeException("Time conflict with existing booking");
+        }
+
         return BookingMapper.mapBookingToBookingDto(bookingRepository.save(booking));
     }
 
@@ -85,8 +93,7 @@ public class BookingServiceImpl implements BookingService {
         if (!userId.equals(item.getOwner().getId()) && !userId.equals(booking.getBooker().getId())) {
             throw new NotFoundException("user not found");
         }
-        return BookingMapper.mapBookingToBookingDto(bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Booking not found with id: " + bookingId)));
+        return BookingMapper.mapBookingToBookingDto(booking);
     }
 
     @Override
@@ -109,10 +116,10 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now());
                 break;
             case WAITING:
-                bookings = bookingRepository.findAllByBookerIdAndBookingStatus(userId, BookingStatus.WAITING);
+                bookings = bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.WAITING);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByBookerIdAndBookingStatus(userId, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.REJECTED);
                 break;
         }
         return bookings.stream()
@@ -149,10 +156,10 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByItemInAndStartIsAfterOrderByStartDesc(itemIds, LocalDateTime.now());
                 break;
             case WAITING:
-                bookings = bookingRepository.findAllByItemInAndBookingStatus(itemIds, BookingStatus.WAITING);
+                bookings = bookingRepository.findAllByItemInAndStatus(itemIds, BookingStatus.WAITING);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByItemInAndBookingStatus(itemIds, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllByItemInAndStatus(itemIds, BookingStatus.REJECTED);
                 break;
         }
         return bookings.stream()

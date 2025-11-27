@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -16,7 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByBookerIdOrderByStartDesc(Long userId);
 
-    List<Booking> findAllByBookerIdAndBookingStatus(Long userId, BookingStatus bookingStatus);
+    List<Booking> findAllByBookerIdAndStatus(Long userId, BookingStatus status);
 
     List<Booking> findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Long userId, LocalDateTime now);
 
@@ -32,11 +33,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItemInAndStartIsAfterOrderByStartDesc(List<Long> itemId, LocalDateTime now);
 
-    List<Booking> findAllByItemInAndBookingStatus(List<Long> itemId, BookingStatus bookingStatus);
+    List<Booking> findAllByItemInAndStatus(List<Long> itemId, BookingStatus bookingStatus);
 
     Boolean existsByBookerIdAndItemIdAndEndBefore(Long userId, Long itemId, LocalDateTime now);
 
     Optional<Booking> findTopByItem_IdAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime now);
 
     Optional<Booking> findTopByItem_IdAndStartAfterOrderByStartAsc(Long itemId, LocalDateTime now);
+
+    @Query(value = "SELECT b FROM Booking b WHERE b.item.id = ?1 " +
+            "AND b.status = ?2 AND ((b.start BETWEEN ?3 " +
+            "AND ?4) OR (b.end BETWEEN ?3 AND ?4) " +
+            "OR (b.start <= ?3 AND b.end >= ?4))")
+
+    List<Booking> findByItemIdAndStatusAndTimeRange(Long itemId, BookingStatus status, LocalDateTime start, LocalDateTime end);
 }
