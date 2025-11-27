@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotAcceptableException;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -59,10 +60,12 @@ public class ItemServiceImpl implements ItemService {
         BookingDto nextBookingDto = null;
 
         if (item.getOwner().getId().equals(userId)) {
-            Optional<Booking> lastBooking = bookingRepository.findTopByItem_IdAndEndBeforeOrderByEndDesc(itemId, LocalDateTime.now());
+            Optional<Booking> lastBooking = bookingRepository.findTopByItem_IdAndEndAndStatusBeforeOrderByEndDesc(
+                    itemId, LocalDateTime.now(), BookingStatus.APPROVED);
             lastBookingDto = lastBooking.map(BookingMapper::mapBookingToBookingDto).orElse(null);
 
-            Optional<Booking> nextBooking = bookingRepository.findTopByItem_IdAndStartAfterOrderByStartAsc(itemId, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.findTopByItem_IdAndStartAfterAndStatusOrderByStartAsc(
+                    itemId, LocalDateTime.now(), BookingStatus.APPROVED);
             nextBookingDto = nextBooking.map(BookingMapper::mapBookingToBookingDto).orElse(null);
         }
         return ItemMapper.mapItemToItemCommentsDto(item, commentDtos, lastBookingDto, nextBookingDto);
