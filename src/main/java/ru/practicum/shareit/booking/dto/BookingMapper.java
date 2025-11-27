@@ -15,13 +15,14 @@ public class BookingMapper {
     }
 
     public static BookingDto mapBookingToBookingDto(Booking booking) {
-        BookingItemDto itemDto = BookingItemDto.builder()
+        BookingDto.BookingItemDto itemDto = BookingDto.BookingItemDto.builder()
                 .id(booking.getItem().getId())
                 .name(booking.getItem().getName())
                 .build();
 
-        BookingUserDto bookerDto = BookingUserDto.builder()
+        BookingDto.BookingUserDto bookerDto = BookingDto.BookingUserDto.builder()
                 .id(booking.getBooker().getId())
+                .name(booking.getBooker().getName())
                 .build();
 
         return BookingDto.builder()

@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -32,6 +33,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("booking not found"));
@@ -67,6 +69,7 @@ public class BookingServiceImpl implements BookingService {
         if (booker.equals(item.getOwner())) {
             throw new RuntimeException("Booker not allowed to book");
         }
+
         Booking booking = BookingMapper.mapBookingCreateDtoToBooking(bookingCreateDto);
         booking.setBooker(booker);
         booking.setItem(item);
