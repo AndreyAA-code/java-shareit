@@ -80,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId) {
-        Item existingItem = itemRepository.getItemById(itemId)
+        Item existingItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
         if (!existingItem.getOwner().getId().equals(userId)) {
             throw new NotFoundException("Нет прав на просмотр. Владелец вещи в запросе не соответствует реальному");
@@ -105,7 +105,7 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addComment(Long itemId, Long userId, CommentDto commentDto) {
         User author = userRepository.getUserById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
-        Item item = itemRepository.getItemById(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
         Boolean isBookingExistsAndFinished = bookingRepository.existsByBookerIdAndItemIdAndEndBefore(userId, itemId, LocalDateTime.now());
         if (!isBookingExistsAndFinished) {

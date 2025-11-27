@@ -20,7 +20,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto createBooking(@Valid @RequestBody BookingCreateDto bookingCreateDto,
-                                    @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
+                                    @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         log.info("Create booking: {} and booker {}", bookingCreateDto, userId);
         return bookingService.createBooking(bookingCreateDto, userId);
     }
@@ -34,7 +34,7 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public BookingDto getBookingById(@PathVariable Long bookingId,
-                                     @RequestHeader(value = "X-Sharer-User-Id", required = true) Long userId) {
+                                     @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         return bookingService.findBookingById(bookingId, userId);
     }
 
