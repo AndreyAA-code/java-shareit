@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    Booking save(Booking booking);
-
     List<Booking> findAllByBookerIdOrderByStartDesc(Long userId);
 
     List<Booking> findAllByBookerIdAndStatus(Long userId, BookingStatus status);
