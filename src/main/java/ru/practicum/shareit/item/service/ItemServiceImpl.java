@@ -38,11 +38,12 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     @Override
-    public Collection<ItemDto> getItems(Long userId) {
-        log.info("getItems()");
-        return itemRepository.findByOwner_Id(userId)
-                .stream()
-                .map(ItemMapper::mapItemToDto)
+    public Collection<ItemCommentsLastNextBookingDto> getItems(Long userId) {
+
+        List<Item> items = itemRepository.findByOwner_Id(userId);
+        return items.stream()
+                .map(Item::getId)
+                .map(itemId -> getItemById(itemId, userId))
                 .collect(Collectors.toList());
     }
 

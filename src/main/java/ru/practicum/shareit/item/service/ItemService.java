@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public interface ItemService {
 
-    Collection<ItemDto> getItems(Long userId);
+    Collection<ItemCommentsLastNextBookingDto> getItems(Long userId);
 
     ItemCommentsLastNextBookingDto getItemById(Long itemId, Long userId);
 

@@ -20,7 +20,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping()
-    public Collection<ItemDto> getItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+    public Collection<ItemCommentsLastNextBookingDto> getItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         log.info("getItems for user {}", userId);
         return itemService.getItems(userId);
     }
