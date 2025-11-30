@@ -76,10 +76,12 @@ public class BookingServiceImpl implements BookingService {
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING);
 
-        List<Booking> bookings = bookingRepository.findByItemIdAndStatusAndTimeRange(bookingCreateDto.getItemId(),
+        Long BookingsIntersectionCount = bookingRepository.countBookingsIntersection(bookingCreateDto.getItemId(),
                 BookingStatus.APPROVED, bookingCreateDto.getStart(), bookingCreateDto.getEnd());
-        if (!bookings.isEmpty()) {
-            throw new RuntimeException("Time conflict with existing booking");
+       // List<Booking> bookings = bookingRepository.findByItemIdAndStatusAndTimeRange(bookingCreateDto.getItemId(),
+        //        BookingStatus.APPROVED, bookingCreateDto.getStart(), bookingCreateDto.getEnd());
+        if (BookingsIntersectionCount>=1) {
+            throw new RuntimeException("Time conflict with existing bookings");
         }
 
         return BookingMapper.mapBookingToBookingDto(bookingRepository.save(booking));
