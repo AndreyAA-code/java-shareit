@@ -1,8 +1,5 @@
 package ru.practicum.shareit.booking.repository;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -54,7 +51,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "SELECT COUNT(b) FROM Booking b WHERE b.item.id = ?1 " +
             "AND b.status = ?2 AND b.start < ?4 AND b.end > ?3")
-    Long countBookingsIntersection(Long itemId, BookingStatus bookingStatus, LocalDateTime start, LocalDateTime end);
+    Long intersectionCount(Long itemId, BookingStatus bookingStatus, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = :userId AND b.status = 'APPROVED' " +
