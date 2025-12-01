@@ -70,8 +70,9 @@ public class ItemServiceImpl implements ItemService {
             return ItemMapper.mapItemToItemCommentsDto(
                     item,
                     itemComments.stream().map(CommentMapper::mapCommentToCommentDto).collect(Collectors.toList()),
-                    BookingMapper.mapBookingToBookingDto(lastBooking),
-                    BookingMapper.mapBookingToBookingDto(nextBooking)
+                    lastBooking != null ? BookingMapper.mapBookingToBookingDto(lastBooking) : null,
+                    nextBooking != null ? BookingMapper.mapBookingToBookingDto(nextBooking) : null
+
             );
         }).collect(Collectors.toList());
     }
