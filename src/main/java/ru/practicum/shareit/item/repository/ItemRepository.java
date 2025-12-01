@@ -10,8 +10,15 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findByOwner_Id(Long userId);
 
+    @Query(value = "SELECT i FROM Item i " +
+            "LEFT JOIN FETCH i.comments c " +
+            "LEFT JOIN FETCH i.bookings b " +
+            "WHERE i.owner.id = ?1 " +
+            "AND i.available = true " +
+            "ORDER BY i.id")
+        List<Item> getItems(Long userId);
 
-    @Query("SELECT i FROM Item i WHERE i.available = true AND" +
+    @Query(value = "SELECT i FROM Item i WHERE i.available = true AND" +
             "(LOWER(i.name) LIKE LOWER(CONCAT('%', ?1, '%')) OR " +
             "LOWER(i.description) LIKE LOWER(CONCAT('%', ?1, '%'))) AND " +
             "i.owner.id = ?2")

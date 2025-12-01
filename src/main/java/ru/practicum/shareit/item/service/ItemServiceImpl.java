@@ -22,6 +22,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -38,18 +39,25 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     @Override
-    public Collection<ItemCommentsLastNextBookingDto> getItems(Long userId) {
+    public List<ItemCommentsLastNextBookingDto> getItems(Long userId) {
+        List<Item> items = itemRepository.getItems(userId);
+        return items.stream()
+                .map(ItemMapper::mapItemToItemCommentsDto)
+                .collect(Collectors.toList());
 
-        List<Item> items = itemRepository.findByOwner_Id(userId);
+   /*     List<Item> items = itemRepository.findByOwner_Id(userId);
         return items.stream()
                 .map(Item::getId)
                 .map(itemId -> getItemById(itemId, userId))
                 .collect(Collectors.toList());
+
+    */
     }
 
     @Override
     public ItemCommentsLastNextBookingDto getItemById(Long itemId, Long userId) {
-        log.info("getItemById({}) by user {}", itemId, userId);
+        return ItemMapper.mapItemToItemCommentsDto(itemRepository.findByOwner_Id(itemId, userId));
+  /*      log.info("getItemById({}) by user {}", itemId, userId);
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + " doesn't exist"));
         List<Comment> comments = commentRepository.findByItemId(itemId);
@@ -70,6 +78,8 @@ public class ItemServiceImpl implements ItemService {
             nextBookingDto = nextBooking.map(BookingMapper::mapBookingToBookingDto).orElse(null);
         }
         return ItemMapper.mapItemToItemCommentsDto(item, commentDtos, lastBookingDto, nextBookingDto);
+
+   */
     }
 
     @Override
