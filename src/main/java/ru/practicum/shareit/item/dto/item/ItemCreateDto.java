@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.dto.item;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +11,6 @@ public class ItemCreateDto {
         private String name;
         @NotBlank
         private String description;
-        private Long ownerId;
         @NotNull
         private Boolean available;
 }

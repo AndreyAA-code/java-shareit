@@ -1,9 +1,13 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.dto.item;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
 import ru.practicum.shareit.item.model.Item;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -13,7 +17,7 @@ public class ItemMapper {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .ownerId(item.getOwnerId())
+                .ownerId(item.getOwner().getId())
                 .available(item.getAvailable())
                 .request(item.getRequest())
                 .build();
@@ -23,7 +27,6 @@ public class ItemMapper {
         return Item.builder()
                 .name(itemCreateDto.getName())
                 .description(itemCreateDto.getDescription())
-                .ownerId(itemCreateDto.getOwnerId())
                 .available(itemCreateDto.getAvailable())
                 .build();
     }
@@ -40,4 +43,19 @@ public class ItemMapper {
         }
         return item;
     }
+
+    public static ItemCommentsLastNextBookingDto mapItemToItemCommentsDto(
+            Item item, List<CommentDto> commentDtos, BookingDto lastBooking, BookingDto nextBooking) {
+        return ItemCommentsLastNextBookingDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .ownerId(item.getOwner().getId())
+                .comments(commentDtos)
+                .lastBooking(lastBooking)
+                .nextBooking(nextBooking)
+                .build();
+    }
+
 }

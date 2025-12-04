@@ -1,23 +1,42 @@
 package ru.practicum.shareit.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookingDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
-    private Timestamp start;
-    private Timestamp end;
-    private Long item;
-    private Long booker;
-    private BookingStatus bookingStatus;
+    private LocalDateTime start;
+    private LocalDateTime end;
+    private BookingItemDto item;
+    private BookingUserDto booker;
+    private BookingStatus status;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookingUserDto {
+        private Long id;
+        private String name;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookingItemDto {
+        private Long id;
+        private String name;
+    }
 }
