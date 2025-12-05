@@ -38,7 +38,13 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getAllItemRequests(Long userId) {
-        return List.of();
+        User requestor = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
+        return itemRequestRepository.findAllByRequestorIdNot(userId)
+                .stream()
+                .map(ItemRequestMapper::mapToItemRequestDto)
+                .collect(Collectors.toList());
+
     }
 
     @Override
