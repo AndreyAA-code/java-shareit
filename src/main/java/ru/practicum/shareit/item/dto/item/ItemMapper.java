@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,7 +22,7 @@ public class ItemMapper {
                 .ownerId(item.getOwner().getId())
                 .available(item.getAvailable());
         if (item.getRequest() != null) {
-            builder.request(item.getRequest().getId());
+            builder.requestId(item.getRequest().getId());
         }
 
         return builder.build();
@@ -61,5 +62,17 @@ public class ItemMapper {
                 .nextBooking(nextBooking)
                 .build();
     }
+    public static ItemForItemRequestsDto mapItemToItemForItemRequestsDto(Item item) {
+        return ItemForItemRequestsDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .ownerId(item.getOwner() != null ? item.getOwner().getId() : null)
+                .build();
+    }
 
+    public static List<ItemForItemRequestsDto> mapItemsToItemForItemRequestsDtos(List<Item> items) {
+        return items.stream()
+                .map(ItemMapper::mapItemToItemForItemRequestsDto)
+                .collect(Collectors.toList());
+    }
 }

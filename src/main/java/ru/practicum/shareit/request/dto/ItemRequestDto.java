@@ -2,8 +2,11 @@ package ru.practicum.shareit.request.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemForItemRequestsDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -12,4 +15,5 @@ public class ItemRequestDto {
     private String description;
     private Long requestor;
     private LocalDateTime created;
+    private List<ItemForItemRequestsDto> items;
 }

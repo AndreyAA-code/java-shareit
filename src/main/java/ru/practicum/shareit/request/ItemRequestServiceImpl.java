@@ -3,6 +3,10 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemForItemRequestsDto;
+import ru.practicum.shareit.item.dto.item.ItemMapper;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
     private final UserRepository userRepository;
+        private final ItemRepository itemRepository;
 
     @Override
     public ItemRequestDto create(ItemRequestCreateDto itemRequestCreateDto, Long userId) {
@@ -29,12 +34,27 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getItemRequests(Long userId) {   //список своих запросов
+    public List<ItemRequestDto> getOwnItemRequests(Long userId) {   //список своих запросов
         User requestor = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
-        return itemRequestRepository.findAllByRequestorId(userId)
-                .stream()
-                .map(ItemRequestMapper::mapToItemRequestDto)
+
+        List<ItemRequest> requests = itemRequestRepository
+                .findByRequestorIdOrderByCreatedDesc(userId);
+
+        return requests.stream()
+                .map(request -> {
+                    List<ItemForItemRequestsDto> items = itemRepository.findByRequestId(request.getId())
+                            .stream()
+                            .map(ItemMapper::mapItemToItemForItemRequestsDto)
+                            .collect(Collectors.toList());
+
+                    return ItemRequestDto.builder()
+                            .id(request.getId())
+                            .description(request.getDescription())
+                            .created(request.getCreated())
+                            .items(items)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -50,6 +70,22 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto getItemRequest(Long requestId, Long userId) { //запрос запроса по ИД
-        return ItemRequestMapper.mapToItemRequestDto(itemRequestRepository.getById(requestId));
+        User requestor = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Item with id " +requestId + "not found"));
+
+        List<ItemForItemRequestsDto> items = itemRepository.findByRequestId(requestId)
+                .stream()
+                .map(ItemMapper::mapItemToItemForItemRequestsDto)
+                .collect(Collectors.toList());
+
+
+        return ItemRequestDto.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+                .created(itemRequest.getCreated())
+                .items(items)
+                .build();
     }
 }

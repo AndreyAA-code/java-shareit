@@ -38,8 +38,4 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY)
     private ItemRequest request;
 
-    public Long getRequestId() {
-        return request != null ? request.getId() : null;
-    }
-
 }

@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @Builder
 public class ItemDto {
@@ -16,5 +13,5 @@ public class ItemDto {
     private String description;
     private Long ownerId;
     private Boolean available;
-    private Long request;
+    private Long requestId;
 }
