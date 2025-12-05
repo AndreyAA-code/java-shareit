@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS items (
     description VARCHAR(255) NOT NULL,
     owner_id BIGINT NOT NULL,
     available BOOLEAN,
-    request VARCHAR(255)
+    request_id BIGINT
 );
 
 --CREATE TYPE booking_status AS ENUM ('WAITING', 'APPROVED', 'REJECTED', 'CANCELLED');

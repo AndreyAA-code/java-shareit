@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 @Entity
@@ -32,6 +33,13 @@ public class Item {
 
     @NotNull
     private Boolean available;
-    private String request;
+
+    @JoinColumn(name = "request_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ItemRequest request;
+
+    public Long getRequestId() {
+        return request != null ? request.getId() : null;
+    }
 
 }
