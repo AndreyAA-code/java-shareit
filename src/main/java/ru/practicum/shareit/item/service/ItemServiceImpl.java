@@ -77,15 +77,6 @@ public class ItemServiceImpl implements ItemService {
         }).collect(Collectors.toList());
     }
 
-   /*     List<Item> items = itemRepository.findByOwner_Id(userId);
-        return items.stream()
-                .map(Item::getId)
-                .map(itemId -> getItemById(itemId, userId))
-                .collect(Collectors.toList());
-
-
-
-*/
     @Override
     public ItemCommentsLastNextBookingDto getItemById(Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId)
