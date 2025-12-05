@@ -29,7 +29,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getItemRequests(Long userId) {
+    public List<ItemRequestDto> getItemRequests(Long userId) {   //список своих запросов
         User requestor = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
         return itemRequestRepository.findAllByRequestorId(userId)
@@ -39,7 +39,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getAllItemRequests(Long userId) {
+    public List<ItemRequestDto> getAllItemRequests(Long userId) { //список всех запросов, кроме своих
         User requestor = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
         return itemRequestRepository.findAllByRequestorIdNot(userId)
@@ -49,7 +49,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto getItemRequest(Long requestId, Long userId) {
+    public ItemRequestDto getItemRequest(Long requestId, Long userId) { //запрос запроса по ИД
         return ItemRequestMapper.mapToItemRequestDto(itemRequestRepository.getById(requestId));
     }
 }
