@@ -26,7 +26,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto create(ItemRequestCreateDto itemRequestCreateDto, Long userId) {
         User requestor = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
         ItemRequest itemRequest = ItemRequestMapper.mapToItemRequest(itemRequestCreateDto);
         itemRequest.setRequestor(requestor);
         return ItemRequestMapper.mapToItemRequestDto(itemRequestRepository.save(itemRequest));
@@ -35,7 +35,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getOwnItemRequests(Long userId) {   //список своих запросов
         User requestor = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
 
         List<ItemRequest> requests = itemRequestRepository
                 .findByRequestorIdOrderByCreatedDesc(userId);
@@ -60,7 +60,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getAllItemRequests(Long userId) { //список всех запросов, кроме своих
         User requestor = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
         return itemRequestRepository.findAllByRequestorIdNot(userId)
                 .stream()
                 .map(ItemRequestMapper::mapToItemRequestDto)
@@ -70,9 +70,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto getItemRequest(Long requestId, Long userId) { //запрос запроса по ИД
         User requestor = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " +userId + "not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("Item with id " +requestId + "not found"));
+                .orElseThrow(() -> new NotFoundException("Item with id " + requestId + "not found"));
 
         List<ItemForItemRequestsDto> items = itemRepository.findByRequestId(requestId)
                 .stream()

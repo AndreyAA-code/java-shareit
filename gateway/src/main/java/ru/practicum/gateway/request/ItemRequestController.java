@@ -1,38 +1,38 @@
 package ru.practicum.gateway.request;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.gateway.request.dto.ItemRequestCreateDto;
-import ru.practicum.gateway.request.dto.ItemRequestDto;
-
-import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
 
+    private final ItemRequestClient itemRequestClient;
+
     @PostMapping
-    public ItemRequestDto createItemRequest(@Valid @RequestBody ItemRequestCreateDto itemRequestCreateDto,
-                                            @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
-        return null;
+    public ResponseEntity<Object> createItemRequest(@Valid @RequestBody ItemRequestCreateDto itemRequestCreateDto,
+                                                    @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+        return itemRequestClient.createItemRequest(itemRequestCreateDto, userId);
     }
 
     @GetMapping
-    public List<ItemRequestDto> getOwnItemRequests(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
-    return null;
+    public ResponseEntity<Object> getOwnItemRequests(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+    return itemRequestClient.getOwnItemRequests(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAllItemRequests(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
-        return null;
+    public ResponseEntity<Object> getAllItemRequests(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+        return itemRequestClient.getAllItemRequests(userId);
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestDto getItemRequest(@PathVariable("requestId") Long requestId,
+    public ResponseEntity<Object> getItemRequest(@PathVariable("requestId") Long requestId,
                                          @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
-        return null;
+        return itemRequestClient.getItemRequest(requestId, userId);
     }
 
 }

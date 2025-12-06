@@ -6,10 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.gateway.user.dto.UserCreateDto;
-import ru.practicum.gateway.user.dto.UserDto;
 import ru.practicum.gateway.user.dto.UserUpdateDto;
-
-import java.util.Collection;
 
 @RestController
 @AllArgsConstructor

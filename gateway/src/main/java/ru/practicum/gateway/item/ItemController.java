@@ -1,25 +1,21 @@
 package ru.practicum.gateway.item;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.gateway.item.dto.comment.CommentDto;
-import ru.practicum.gateway.item.dto.item.ItemCommentsLastNextBookingDto;
 import ru.practicum.gateway.item.dto.item.ItemCreateDto;
-import ru.practicum.gateway.item.dto.item.ItemDto;
 import ru.practicum.gateway.item.dto.item.ItemUpdateDto;
-
-
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/items")
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Slf4j
 public class ItemController {
-    ItemClient itemClient;
+
+    private final ItemClient itemClient;
 
     @GetMapping()
     public ResponseEntity<Object> getItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {

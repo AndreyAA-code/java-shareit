@@ -1,19 +1,14 @@
 package ru.practicum.gateway.booking;
 
-import jakarta.validation.Valid;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.gateway.booking.dto.BookingCreateDto;
-import ru.practicum.gateway.booking.dto.BookingDto;
 import ru.practicum.gateway.booking.dto.BookingState;
 import ru.practicum.gateway.client.BaseClient;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -24,8 +19,9 @@ public class BookingClient extends BaseClient {
     @Value("${server.host}")
     private String host;
 
-    public BookingClient() {
-        super(new RestTemplate());
+    @Autowired
+    public BookingClient(RestTemplate restTemplate) {
+        super(restTemplate);
     }
 
     public ResponseEntity<Object> createBooking(BookingCreateDto bookingCreateDto, Long userId) {
@@ -34,7 +30,7 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> approve(Long userId, Long bookingId, Boolean approved) {
         String path = host + URL + "/" + bookingId + "?approved=" + approved;
-        return patch(path, userId);
+        return patch(path, userId, bookingId);
     }
 
     public ResponseEntity<Object> getBookingById(Long bookingId, Long userId) {

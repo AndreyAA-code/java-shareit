@@ -7,20 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import ru.practicum.gateway.booking.dto.BookingCreateDto;
-import ru.practicum.gateway.booking.dto.BookingState;
 import ru.practicum.gateway.client.BaseClient;
 import ru.practicum.gateway.user.dto.UserCreateDto;
-import ru.practicum.gateway.user.dto.UserDto;
 import ru.practicum.gateway.user.dto.UserUpdateDto;
-
-import java.util.Collection;
-import java.util.Map;
 
 @Service
 public class UserClient extends BaseClient {
 
-    private final String URL = "/users";
+    private final String url = "/users";
 
     @Value("${server.host}")
     private String host;
@@ -31,24 +25,24 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getUsers() {
-        return get(host + URL);
+        return get(host + url);
     }
 
     public ResponseEntity<Object> getUser(@PathVariable Long userId) {
-        return get(host + URL + "/" + userId);
+        return get(host + url + "/" + userId);
     }
 
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        return post(host + URL, userCreateDto);
+        return post(host + url, userCreateDto);
     }
 
-    public ResponseEntity<Object> updateUser(@Valid @PathVariable ("userId") Long userId,
-                              @RequestBody UserUpdateDto userUpdateDto) {
-        return patch(host + URL + "/" +userId, userId, userUpdateDto);
+    public ResponseEntity<Object> updateUser(
+            @Valid @PathVariable("userId") Long userId,
+            @RequestBody UserUpdateDto userUpdateDto) {
+        return patch(host + url + "/" + userId, userId, userUpdateDto);
     }
 
-    public ResponseEntity<Object> deleteUser(@PathVariable ("userId") Long userId) {
-        return delete(host + URL + "/" + userId);
+    public ResponseEntity<Object> deleteUser(@PathVariable("userId") Long userId) {
+        return delete(host + url + "/" + userId);
     }
-
 }

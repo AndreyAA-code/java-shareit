@@ -6,10 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.gateway.booking.dto.BookingCreateDto;
-import ru.practicum.gateway.booking.dto.BookingDto;
 import ru.practicum.gateway.booking.dto.BookingState;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")

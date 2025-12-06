@@ -61,6 +61,7 @@ public class ItemMapper {
                 .nextBooking(nextBooking)
                 .build();
     }
+
     public static ItemForItemRequestsDto mapItemToItemForItemRequestsDto(Item item) {
         return ItemForItemRequestsDto.builder()
                 .id(item.getId())
