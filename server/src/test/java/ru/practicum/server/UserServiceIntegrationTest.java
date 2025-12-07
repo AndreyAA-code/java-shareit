@@ -75,7 +75,7 @@ class UserServiceIntegrationTest {
     void testCreateUser_DuplicateEmail_ShouldThrowEmailAlreadyExistsException() {
         UserCreateDto dto = new UserCreateDto();
         dto.setName("Duplicate");
-        dto.setEmail("test@example.com");  // Уже существует
+        dto.setEmail("test@example.com");
 
         EmailAlreadyExistsException exception = assertThrows(
                 EmailAlreadyExistsException.class,
@@ -118,13 +118,11 @@ class UserServiceIntegrationTest {
 
     @Test
     void testUpdateUser_DuplicateEmail_ShouldThrowEmailAlreadyExistsException() {
-        // Создаём второго пользователя
         UserCreateDto dto2 = new UserCreateDto();
         dto2.setName("Second User");
         dto2.setEmail("second@example.com");
         UserDto secondUser = userService.createUser(dto2);
 
-        // Пытаемся обновить первого на email второго
         UserUpdateDto updateDto = new UserUpdateDto();
         updateDto.setEmail("second@example.com");
 
@@ -135,7 +133,6 @@ class UserServiceIntegrationTest {
 
         assertTrue(exception.getMessage().contains("second@example.com"));
 
-        // Удаляем второго пользователя
         userService.deleteUser(secondUser.getId());
     }
 
@@ -157,7 +154,6 @@ class UserServiceIntegrationTest {
     void testDeleteUser_ShouldRemoveFromDatabase() {
         userService.deleteUser(testUserId);
 
-        // Проверяем, что пользователь больше не находится
         NotFoundException exception = assertThrows(
                 NotFoundException.class,
                 () -> userService.getUserById(testUserId)
@@ -168,7 +164,6 @@ class UserServiceIntegrationTest {
 
     @Test
     void testDeleteUser_NonExistentId_ShouldNotThrow() {
-        // Удаление несуществующего ID не должно кидать исключение
         assertDoesNotThrow(() -> userService.deleteUser(999L));
     }
 
