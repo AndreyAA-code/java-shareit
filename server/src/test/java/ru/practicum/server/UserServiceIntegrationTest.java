@@ -10,7 +10,6 @@ import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.user.dto.UserCreateDto;
 import ru.practicum.server.user.dto.UserDto;
 import ru.practicum.server.user.dto.UserUpdateDto;
-import ru.practicum.server.user.repository.UserRepository;
 import ru.practicum.server.user.service.UserService;
 
 import java.util.ArrayList;
