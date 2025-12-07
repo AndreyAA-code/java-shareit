@@ -53,9 +53,9 @@ class UserServiceIntegrationTest {
 
         assertNotNull(users);
         assertEquals(1, users.size());
-        assertEquals(testUserId, users.get(0).getId());
-        assertEquals("Test User", users.get(0).getName());
-        assertEquals("test@example.com", users.get(0).getEmail());
+        assertEquals(testUserId, users.getFirst().getId());
+        assertEquals("Test User", users.getFirst().getName());
+        assertEquals("test@example.com", users.getFirst().getEmail());
     }
 
     @Test
@@ -186,4 +186,6 @@ class UserServiceIntegrationTest {
         assertTrue(exception.getMessage().contains("999"));
         assertTrue(exception.getMessage().contains("doesn't exist"));
     }
+
+
 }

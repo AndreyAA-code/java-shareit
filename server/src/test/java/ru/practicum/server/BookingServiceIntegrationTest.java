@@ -1,5 +1,6 @@
 package ru.practicum.server;
 
+import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -10,10 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.booking.dto.BookingCreateDto;
 import ru.practicum.server.booking.dto.BookingDto;
 import ru.practicum.server.booking.model.Booking;
+import ru.practicum.server.booking.model.BookingState;
 import ru.practicum.server.booking.model.BookingStatus;
 import ru.practicum.server.booking.repository.BookingRepository;
 import ru.practicum.server.booking.service.BookingService;
 import ru.practicum.server.exceptions.NoRightsException;
+import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.exceptions.UnavailableItemException;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.repository.ItemRepository;
@@ -21,7 +24,9 @@ import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -161,5 +166,191 @@ public class BookingServiceIntegrationTest {
         assertThat(result.getId()).isEqualTo(booking.getId());
         assertThat(result.getBooker().getId()).isEqualTo(booker.getId());
     }
+
+    @Test
+    void testFindBookingById_NotBelongsToUser_ThrowsNotFoundException() {
+        Booking booking = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .status(BookingStatus.WAITING)
+                .build();
+        bookingRepository.save(booking);
+
+        assertThatThrownBy(() -> bookingService.findBookingById(booking.getId(), owner.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("user not found");
+    }
+
+    @Test
+    void testFindAllBookings_Current() {
+        Booking past = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().minusDays(2))
+                .end(LocalDateTime.now().minusDays(1))
+                .status(BookingStatus.APPROVED)
+                .build();
+        Booking current = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().minusHours(1))
+                .end(LocalDateTime.now().plusHours(1))
+                .status(BookingStatus.APPROVED)
+                .build();
+        bookingRepository.saveAll(List.of(past, current));
+
+
+        List<BookingDto> result = bookingService.findAllBookings(booker.getId(), BookingState.CURRENT);
+
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(current.getId());
+    }
+
+    @Test
+    void testFindAllBookings_Waiting() {
+        Booking waiting = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .status(BookingStatus.WAITING)
+                .build();
+        bookingRepository.save(waiting);
+
+        List<BookingDto> result = bookingService.findAllBookings(booker.getId(), BookingState.WAITING);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getStatus()).isEqualTo(BookingStatus.WAITING);
+    }
+
+    @Test
+    void testApproveBooking_OwnerApproves_Success() {
+        Booking booking = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .status(BookingStatus.WAITING)
+                .build();
+        bookingRepository.save(booking);
+
+        BookingDto result = bookingService.approve(booking.getId(), owner.getId(), true);
+
+        assertThat(result.getStatus()).isEqualTo(BookingStatus.APPROVED);
+        assertThat(result.getItem().getId()).isEqualTo(item.getId());
+        assertThat(result.getBooker().getId()).isEqualTo(booker.getId());
+    }
+
+    @Test
+    void testApproveBooking_OwnerRejects_Success() {
+        Booking booking = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .status(BookingStatus.WAITING)
+                .build();
+        bookingRepository.save(booking);
+
+        BookingDto result = bookingService.approve(booking.getId(), owner.getId(), false);
+
+        assertThat(result.getStatus()).isEqualTo(BookingStatus.REJECTED);
+    }
+
+    @Test
+    void testApproveBooking_NotOwner_ThrowsException() {
+        Booking booking = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .status(BookingStatus.WAITING)
+                .build();
+        bookingRepository.save(booking);
+
+        assertThatThrownBy(() ->
+                bookingService.approve(booking.getId(), booker.getId(), true))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("Only owner can approve/reject");
+    }
+
+    @Test
+    void testGetUserBookings_AllState_Success() {
+        Booking b1 = createBooking(booker, item, 1, 2, BookingStatus.APPROVED);
+        Booking b2 = createBooking(booker, item, 3, 4, BookingStatus.WAITING);
+        bookingRepository.saveAll(List.of(b1, b2));
+
+
+        List<BookingDto> result = bookingService.getUserBookings(booker.getId(), BookingState.ALL, 0, 10);
+
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getId()).isEqualTo(b2.getId());
+        assertThat(result.get(1).getId()).isEqualTo(b1.getId());
+    }
+
+    private Booking createBooking(User booker, Item item, int startDays, int endDays, BookingStatus status) {
+        return Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().plusDays(startDays))
+                .end(LocalDateTime.now().plusDays(endDays))
+                .status(status)
+                .build();
+    }
+
+    @Test
+    void testGetUserBookings_OtherUser_ThrowsException() {
+        User otherUser = User.builder().id(999L).build();
+
+        assertThatThrownBy(() ->
+                bookingService.getUserBookings(otherUser.getId(), BookingState.ALL, 0, 10))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("Cannot view other user's bookings");
+    }
+
+    @Test
+    void testCreateBooking_InvalidDates_ThrowsException() {
+        BookingCreateDto dto = BookingCreateDto.builder()
+                .itemId(item.getId())
+                .start(LocalDateTime.now().plusDays(2))
+                .end(LocalDateTime.now().plusDays(1))
+                .build();
+
+        assertThatThrownBy(() -> bookingService.createBooking(dto, booker.getId()))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("End date must be after start date");
+    }
+
+    @Test
+    void testCreateBooking_ItemAlreadyBooked_ThrowsException() {
+        createAndSaveBooking(booker, item, 1, 3, BookingStatus.APPROVED);
+
+        BookingCreateDto dto = BookingCreateDto.builder()
+                .itemId(item.getId())
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .build();
+
+        assertThatThrownBy(() -> bookingService.createBooking(dto, booker.getId()))
+                .isInstanceOf(ConflictException.class)
+                .hasMessageContaining("Item is already booked for requested period");
+    }
+
+    @Test
+    void testCancelBooking_BookerCancels_Success() {
+        Booking booking = createAndSaveBooking(booker, item, 1, 2, BookingStatus.WAITING);
+
+
+        BookingDto result = bookingService.cancelBooking(booking.getId(), booker.getId());
+
+        assertThat(result.getStatus()).isEqualTo(BookingStatus.CANCELLED);
+    }
+
+
+
 }
 
