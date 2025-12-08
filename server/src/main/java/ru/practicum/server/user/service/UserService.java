@@ -4,11 +4,11 @@ import ru.practicum.server.user.dto.UserCreateDto;
 import ru.practicum.server.user.dto.UserDto;
 import ru.practicum.server.user.dto.UserUpdateDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface UserService {
 
-    Collection<UserDto> getUsers();
+    List<UserDto> getUsers();
 
     UserDto createUser(UserCreateDto userCreateDto);
 

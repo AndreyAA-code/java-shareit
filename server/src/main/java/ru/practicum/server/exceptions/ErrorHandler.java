@@ -11,9 +11,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(NotFoundException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(NoRightsException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleNoRights(NoRightsException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotAcceptableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotAcceptable(NotAcceptableException ex) {
         return new ErrorResponse(ex.getMessage());
     }
 
@@ -22,12 +40,6 @@ public class ErrorHandler {
     public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldError().getDefaultMessage();
         return new ErrorResponse("Validation Failed: " + message);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
-        return new ErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
@@ -44,21 +56,9 @@ public class ErrorHandler {
         return new ErrorResponse("Validation Failed: " + message);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequest(Exception ex) {
+    public ErrorResponse handleUnexpectedException(Exception ex) {
         return new ErrorResponse("Validation Failed: " + ex.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleNoRights(NoRightsException ex) {
-        return new ErrorResponse(ex.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleNotAcceptable(NotAcceptableException ex) {
-        return new ErrorResponse(ex.getMessage());
     }
 }

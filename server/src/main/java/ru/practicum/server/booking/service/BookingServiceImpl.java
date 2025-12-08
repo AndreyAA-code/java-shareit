@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto createBooking(BookingCreateDto bookingCreateDto, Long userId) {
         Item item = itemRepository.findById(bookingCreateDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Item not found with id: " + bookingCreateDto.getItemId()));
-        User booker = userRepository.getUserById(userId)
+        User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Booker not found with id: " + userId));
         if (bookingCreateDto.getEnd().isBefore(bookingCreateDto.getStart())) {
             throw new RuntimeException("End time is before start time");
@@ -99,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findAllBookings(Long userId, BookingState bookingState) {
-        User booker = userRepository.getUserById(userId)
+        User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Booker not found with id: " + userId));
         List<Booking> bookings = new ArrayList<>();
 
@@ -130,17 +130,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getByOwner(Long userId, BookingState bookingState) {
-        User owner = userRepository.getUserById(userId)
+        User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Owner not found with id: " + userId));
         List<Item> ownerItems = itemRepository.findByOwner_Id(userId);
         if (ownerItems.isEmpty()) {
             return Collections.emptyList();
         }
-
-      /*  List<Long> itemIds = ownerItems
-                .stream()
-                .map(Item::getId)
-                .collect(Collectors.toList()); */
 
         List<Booking> bookings = new ArrayList<>();
         switch (bookingState) {

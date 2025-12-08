@@ -12,7 +12,7 @@ import ru.practicum.server.user.dto.UserUpdateDto;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.repository.UserRepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public Collection<UserDto> getUsers() {
+    public List<UserDto> getUsers() {
         return userRepository.findAll()
                 .stream()
                 .map(UserMapper::mapToUserDto)
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
-        User existingUser = userRepository.getUserById(userId)
+        User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
         if (userRepository.findByEmail(userUpdateDto.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Пользователь с email " + userUpdateDto.getEmail() + " уже существует");
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        return UserMapper.mapToUserDto(userRepository.getUserById(userId)
+        return UserMapper.mapToUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist")));
     }
 }

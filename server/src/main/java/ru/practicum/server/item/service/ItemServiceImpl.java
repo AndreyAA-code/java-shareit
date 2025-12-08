@@ -107,7 +107,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(ItemCreateDto itemCreateDto, Long userId) {
-        User owner = userRepository.getUserById(userId)
+        User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
         log.info("createItem({})", itemCreateDto);
         Item item = ItemMapper.mapItemDtoToItem(itemCreateDto);
@@ -145,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CommentDto addComment(Long itemId, Long userId, CommentDto commentDto) {
-        User author = userRepository.getUserById(userId)
+        User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));

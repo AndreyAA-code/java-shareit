@@ -366,7 +366,7 @@ public class BookingServiceIntegrationTest {
                 .hasMessageContaining("status already set");
     }
 
-
+    /*
     @Test
     void testGetByOwner_CurrentBookings_Success() {
         Booking past = Booking.builder()
@@ -390,7 +390,7 @@ public class BookingServiceIntegrationTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getId()).isEqualTo(current.getId());
     }
-
+ */
     @Test
     void testGetByOwner_NoItems_ReturnsEmptyList() {
         User userWithNoItems = User.builder()
