@@ -1,17 +1,15 @@
 package ru.practicum.server.item.service;
 
-
 import ru.practicum.server.item.dto.comment.CommentDto;
 import ru.practicum.server.item.dto.item.ItemCommentsLastNextBookingDto;
 import ru.practicum.server.item.dto.item.ItemCreateDto;
 import ru.practicum.server.item.dto.item.ItemDto;
 import ru.practicum.server.item.dto.item.ItemUpdateDto;
-
-import java.util.Collection;
+import java.util.List;
 
 public interface ItemService {
 
-    Collection<ItemCommentsLastNextBookingDto> getItems(Long userId);
+    List<ItemCommentsLastNextBookingDto> getItems(Long userId);
 
     ItemCommentsLastNextBookingDto getItemById(Long itemId, Long userId);
 
@@ -19,7 +17,7 @@ public interface ItemService {
 
     ItemDto updateItemById(Long itemId, ItemUpdateDto itemUpdateDto, Long userId);
 
-    Collection<ItemDto> searchItemsByNameAndDescription(String descr, Long userId);
+    List<ItemDto> searchItemsByNameAndDescription(String descr, Long userId);
 
     CommentDto addComment(Long itemId, Long userId, CommentDto commentDto);
 }

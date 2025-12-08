@@ -11,6 +11,7 @@ import ru.practicum.server.item.dto.item.ItemDto;
 import ru.practicum.server.item.dto.item.ItemUpdateDto;
 import ru.practicum.server.item.service.ItemService;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/items")
@@ -20,7 +21,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping()
-    public Collection<ItemCommentsLastNextBookingDto> getItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+    public List<ItemCommentsLastNextBookingDto> getItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         log.info("getItems for user {}", userId);
         return itemService.getItems(userId);
     }
