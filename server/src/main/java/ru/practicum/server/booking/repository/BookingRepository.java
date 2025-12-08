@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.model.BookingStatus;
+import ru.practicum.server.item.model.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,17 +23,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByBookerIdAndStartIsAfterOrderByStartDesc(Long userId, LocalDateTime now);
 
-    List<Booking> findAllByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(Long userId, LocalDateTime now, LocalDateTime nowed);
+    List<Booking> findAllByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(Long userId, LocalDateTime now1, LocalDateTime now2);
 
-    List<Booking> findAllByItemInOrderByStartDesc(List<Long> itemIds);
+    List<Booking> findAllByItemInOrderByStartDesc(List<Item> itemIds);
 
-    List<Booking> findAllByItemInAndEndIsAfterAndStartIsBeforeOrderByStartDesc(List<Long> itemId, LocalDateTime now, LocalDateTime now1);
+    List<Booking> findAllByItemInAndEndIsAfterAndStartIsBeforeOrderByStartDesc(List<Item> itemId, LocalDateTime now, LocalDateTime now1);
 
-    List<Booking> findAllByItemInAndEndIsBeforeOrderByStartDesc(List<Long> itemId, LocalDateTime now);
+    List<Booking> findAllByItemInAndEndIsBeforeOrderByStartDesc(List<Item> itemId, LocalDateTime now);
 
-    List<Booking> findAllByItemInAndStartIsAfterOrderByStartDesc(List<Long> itemId, LocalDateTime now);
+    List<Booking> findAllByItemInAndStartIsAfterOrderByStartDesc(List<Item> itemId, LocalDateTime now);
 
-    List<Booking> findAllByItemInAndStatus(List<Long> itemId, BookingStatus bookingStatus);
+    List<Booking> findAllByItemInAndStatus(List<Item> itemId, BookingStatus bookingStatus);
 
     Boolean existsByBookerIdAndItemIdAndEndBefore(Long userId, Long itemId, LocalDateTime now);
 

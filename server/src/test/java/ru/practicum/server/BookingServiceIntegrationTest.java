@@ -1,7 +1,6 @@
 package ru.practicum.server;
 
 import org.junit.jupiter.api.AfterEach;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,6 +17,7 @@ import ru.practicum.server.booking.repository.BookingRepository;
 import ru.practicum.server.booking.service.BookingService;
 import ru.practicum.server.exceptions.NoRightsException;
 import ru.practicum.server.exceptions.NotFoundException;
+import ru.practicum.server.exceptions.StatusException;
 import ru.practicum.server.exceptions.UnavailableItemException;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.repository.ItemRepository;
@@ -27,7 +27,8 @@ import ru.practicum.server.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -336,6 +337,82 @@ public class BookingServiceIntegrationTest {
                 .hasMessageContaining("Time conflict with existing bookings");
     }
 
+    @Test
+    void testCreateBooking_OwnerTriesToBookOwnItem_ThrowsException() {
+        BookingCreateDto dto = BookingCreateDto.builder()
+                .itemId(item.getId())
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .build();
+
+        assertThatThrownBy(() -> bookingService.createBooking(dto, owner.getId()))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Booker not allowed to book");
+    }
+
+    @Test
+    void testApproveBooking_AlreadyApproved_ThrowsStatusException() {
+        Booking booking = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .status(BookingStatus.APPROVED)
+                .build();
+        bookingRepository.save(booking);
+
+        assertThatThrownBy(() -> bookingService.approve(owner.getId(), booking.getId(), true))
+                .isInstanceOf(StatusException.class)
+                .hasMessageContaining("status already set");
+    }
+
+
+    @Test
+    void testGetByOwner_CurrentBookings_Success() {
+        Booking past = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().minusDays(2))
+                .end(LocalDateTime.now().minusDays(1))
+                .status(BookingStatus.APPROVED)
+                .build();
+        Booking current = Booking.builder()
+                .item(item)
+                .booker(booker)
+                .start(LocalDateTime.now().minusHours(1))
+                .end(LocalDateTime.now().plusHours(1))
+                .status(BookingStatus.APPROVED)
+                .build();
+        bookingRepository.saveAll(List.of(past, current));
+
+        List<BookingDto> result = bookingService.getByOwner(owner.getId(), BookingState.CURRENT);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(current.getId());
+    }
+
+    @Test
+    void testGetByOwner_NoItems_ReturnsEmptyList() {
+        User userWithNoItems = User.builder()
+                .id(3L)
+                .name("NoItemsUser")
+                .email("noitems@example.com")
+                .build();
+        userRepository.save(userWithNoItems);
+
+        List<BookingDto> result = bookingService.getByOwner(userWithNoItems.getId(), BookingState.ALL);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testFindBookingById_BookingNotFound_ThrowsNotFoundException() {
+        assertThatThrownBy(() -> bookingService.findBookingById(999L, booker.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("booking not found");
+    }
+
+
     private Booking createBooking(User booker, Item item, int startDays, int endDays, BookingStatus status) {
         return Booking.builder()
                 .item(item)
@@ -345,5 +422,8 @@ public class BookingServiceIntegrationTest {
                 .status(status)
                 .build();
     }
+
+
+
 }
 

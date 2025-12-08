@@ -137,30 +137,30 @@ public class BookingServiceImpl implements BookingService {
             return Collections.emptyList();
         }
 
-        List<Long> itemIds = ownerItems
+      /*  List<Long> itemIds = ownerItems
                 .stream()
                 .map(Item::getId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); */
 
         List<Booking> bookings = new ArrayList<>();
         switch (bookingState) {
             case ALL:
-                bookings = bookingRepository.findAllByItemInOrderByStartDesc(itemIds);
+                bookings = bookingRepository.findAllByItemInOrderByStartDesc(ownerItems);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllByItemInAndEndIsAfterAndStartIsBeforeOrderByStartDesc(itemIds, LocalDateTime.now(), LocalDateTime.now());
+                bookings = bookingRepository.findAllByItemInAndEndIsAfterAndStartIsBeforeOrderByStartDesc(ownerItems, LocalDateTime.now(), LocalDateTime.now());
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByItemInAndEndIsBeforeOrderByStartDesc(itemIds, LocalDateTime.now());
+                bookings = bookingRepository.findAllByItemInAndEndIsBeforeOrderByStartDesc(ownerItems, LocalDateTime.now());
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByItemInAndStartIsAfterOrderByStartDesc(itemIds, LocalDateTime.now());
+                bookings = bookingRepository.findAllByItemInAndStartIsAfterOrderByStartDesc(ownerItems, LocalDateTime.now());
                 break;
             case WAITING:
-                bookings = bookingRepository.findAllByItemInAndStatus(itemIds, BookingStatus.WAITING);
+                bookings = bookingRepository.findAllByItemInAndStatus(ownerItems, BookingStatus.WAITING);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByItemInAndStatus(itemIds, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllByItemInAndStatus(ownerItems, BookingStatus.REJECTED);
                 break;
         }
         return bookings.stream()
