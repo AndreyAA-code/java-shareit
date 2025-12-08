@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.user.UserController;
 import ru.practicum.server.user.dto.UserCreateDto;
 import ru.practicum.server.user.dto.UserDto;
@@ -113,7 +114,7 @@ class UserControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
-        when(userService.getUserById(999L)).thenThrow(new RuntimeException("User not found"));
+        when(userService.getUserById(999L)).thenThrow(new NotFoundException("User not found"));
 
         mockMvc.perform(get("/users/999")
                         .accept(MediaType.APPLICATION_JSON))
