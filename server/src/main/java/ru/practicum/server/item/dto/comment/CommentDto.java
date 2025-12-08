@@ -1,15 +1,18 @@
 package ru.practicum.server.item.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentDto {
     private Long id;
+    @NotBlank
     private String text;
     @JsonIgnore
     private CommentItemDto item;

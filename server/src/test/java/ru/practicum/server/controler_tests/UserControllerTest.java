@@ -1,4 +1,4 @@
-package ru.practicum.server;
+package ru.practicum.server.controler_tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
