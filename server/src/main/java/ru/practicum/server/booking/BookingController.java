@@ -3,6 +3,7 @@ package ru.practicum.server.booking;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.server.booking.dto.BookingCreateDto;
 import ru.practicum.server.booking.dto.BookingDto;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequestMapping("/bookings")
 @AllArgsConstructor
 @Slf4j
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 
