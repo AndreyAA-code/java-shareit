@@ -329,6 +329,7 @@ public class BookingServiceIntegrationTest {
     void testCreateBooking_ItemAlreadyBooked_ThrowsException() {
         createAndSaveBooking(booker, item, 1, 3, BookingStatus.APPROVED);
 
+
         BookingCreateDto dto = BookingCreateDto.builder()
                 .itemId(item.getId())
                 .start(LocalDateTime.now().plusDays(1))
