@@ -16,7 +16,7 @@ public class UserClient extends BaseClient {
 
     private final String url = "/users";
 
-    @Value("${server.port}")
+    @Value("${server.host}")
     private String host;
 
     @Autowired

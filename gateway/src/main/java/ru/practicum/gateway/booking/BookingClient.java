@@ -16,7 +16,7 @@ public class BookingClient extends BaseClient {
 
     private static final String URL = "/bookings";
 
-    @Value("${server.port}")
+    @Value("${server.host}")
     private String host;
 
     @Autowired

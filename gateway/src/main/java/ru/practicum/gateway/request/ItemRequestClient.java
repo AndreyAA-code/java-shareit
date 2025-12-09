@@ -15,7 +15,7 @@ public class ItemRequestClient extends BaseClient {
 
     private static final String URL = "/requests";
 
-    @Value("${server.port}")
+    @Value("${server.host}")
     private String host;
 
     @Autowired
