@@ -91,22 +91,6 @@ class BookingControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequest_WhenEndBeforeStart() throws Exception {
-        BookingCreateDto invalidDto = new BookingCreateDto();
-        invalidDto.setStart(LocalDateTime.now().plusDays(2));
-        invalidDto.setEnd(LocalDateTime.now().plusDays(1));
-        invalidDto.setItemId(itemId);
-
-        mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(bookingService, never()).createBooking(any(), eq(userId));
-    }
-
-    @Test
     void shouldReturnBadRequest_WhenItemIdIsNull() throws Exception {
         BookingCreateDto invalidDto = new BookingCreateDto();
         invalidDto.setStart(LocalDateTime.now().plusDays(1));

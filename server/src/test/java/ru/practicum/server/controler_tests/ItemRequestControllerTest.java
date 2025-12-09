@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.request.ItemRequestController;
 import ru.practicum.server.request.dto.ItemRequestCreateDto;
 import ru.practicum.server.request.dto.ItemRequestDto;
@@ -153,7 +154,7 @@ class ItemRequestControllerTest {
     @Test
     void shouldReturnNotFound_WhenRequestDoesNotExist() throws Exception {
         when(itemRequestService.getItemRequest(eq(999L), eq(userId)))
-                .thenThrow(new RuntimeException("Request not found"));
+                .thenThrow(new NotFoundException("Request not found"));
 
         mockMvc.perform(get("/requests/999", 999L)
                         .header("X-Sharer-User-Id", userId))
