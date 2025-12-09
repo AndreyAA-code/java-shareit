@@ -73,13 +73,13 @@ class ItemRequestServiceIntegrationTest {
     @Test
     void shouldCreateItemRequest_Successfully() {
         ItemRequestCreateDto requestDto = new ItemRequestCreateDto();
-        requestDto.setDescription("Нужна дрель на выходных");
+        requestDto.setDescription("Нужна дрель");
 
         ItemRequestDto created = itemRequestService.create(requestDto, requesterId);
 
         assertNotNull(created);
         assertNotNull(created.getId());
-        assertEquals("Нужна дрель на выходных", created.getDescription());
+        assertEquals("Нужна дрель", created.getDescription());
         assertNotNull(created.getCreated());
         assertTrue(created.getCreated().isBefore(LocalDateTime.now().plusSeconds(1)));
     }
@@ -143,7 +143,7 @@ class ItemRequestServiceIntegrationTest {
         itemDto.setRequestId(created.getId());
         itemService.createItem(itemDto, ownerId);
 
-        ItemRequestDto found = itemRequestService.getItemRequest(created.getId(), otherUserId); // любой пользователь может посмотреть
+        ItemRequestDto found = itemRequestService.getItemRequest(created.getId(), otherUserId);
 
         assertNotNull(found);
         assertEquals(created.getId(), found.getId());

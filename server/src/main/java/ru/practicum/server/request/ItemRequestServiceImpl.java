@@ -33,7 +33,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getOwnItemRequests(Long userId) {   //список своих запросов
+    public List<ItemRequestDto> getOwnItemRequests(Long userId) {
         User requestor = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
 
@@ -58,7 +58,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getAllItemRequests(Long userId) { //список всех запросов, кроме своих
+    public List<ItemRequestDto> getAllItemRequests(Long userId) {
         User requestor = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
         return itemRequestRepository.findAllByRequestorIdNot(userId)
@@ -68,7 +68,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto getItemRequest(Long requestId, Long userId) { //запрос запроса по ИД
+    public ItemRequestDto getItemRequest(Long requestId, Long userId) {
         User requestor = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)

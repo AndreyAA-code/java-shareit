@@ -76,7 +76,7 @@ class BookingControllerTest {
     @Test
     void shouldReturnBadRequest_WhenStartIsPast() throws Exception {
         BookingCreateDto invalidDto = new BookingCreateDto();
-        invalidDto.setStart(LocalDateTime.now().minusDays(1)); // Прошлое
+        invalidDto.setStart(LocalDateTime.now().minusDays(1));
         invalidDto.setEnd(LocalDateTime.now().plusDays(1));
         invalidDto.setItemId(itemId);
 
@@ -85,7 +85,6 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
-
 
         verify(bookingService, never()).createBooking(any(), eq(userId));
     }
