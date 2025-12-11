@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.hasSize;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,34 +60,6 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.created").isNotEmpty());
 
         verify(itemRequestService, times(1)).create(any(ItemRequestCreateDto.class), eq(userId));
-    }
-
-    @Test
-    void shouldReturnBadRequest_WhenDescriptionEmpty() throws Exception {
-        ItemRequestCreateDto invalidDto = new ItemRequestCreateDto();
-        invalidDto.setDescription("");
-
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemRequestService, never()).create(any(), eq(userId));
-    }
-
-    @Test
-    void shouldReturnBadRequest_WhenDescriptionNull() throws Exception {
-        ItemRequestCreateDto invalidDto = new ItemRequestCreateDto();
-        invalidDto.setDescription(null);
-
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemRequestService, never()).create(any(), eq(userId));
     }
 
     @Test

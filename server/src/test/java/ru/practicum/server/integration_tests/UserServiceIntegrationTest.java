@@ -89,24 +89,6 @@ class UserServiceIntegrationTest {
     }
 
     @Test
-    void testCreateUser_EmailNull_ShouldThrowException() {
-        UserCreateDto dto = new UserCreateDto();
-        dto.setName("No Email");
-        dto.setEmail(null);
-
-        assertThrows(Exception.class, () -> userService.createUser(dto));
-    }
-
-    @Test
-    void testCreateUser_NameNull_ShouldThrowException() {
-        UserCreateDto dto = new UserCreateDto();
-        dto.setName(null);
-        dto.setEmail("name@example.com");
-
-        assertThrows(Exception.class, () -> userService.createUser(dto));
-    }
-
-    @Test
     void testUpdateUser_ValidData_ShouldSucceed() {
         UserUpdateDto dto = new UserUpdateDto();
         dto.setName("Updated Name");

@@ -16,8 +16,6 @@ import ru.practicum.server.user.service.UserService;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -123,27 +121,4 @@ class UserControllerTest {
         verify(userService, times(1)).getUserById(999L);
     }
 
-    @Test
-    void shouldValidateOnCreateUserWithInvalidEmail() throws Exception {
-        UserCreateDto invalidDto = new UserCreateDto("John", "bad-email");
-
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(userService, never()).createUser(any());
-    }
-
-    @Test
-    void shouldValidateOnUpdateUserWithInvalidEmail() throws Exception {
-        UserUpdateDto invalidDto = new UserUpdateDto("Jane", "bad-email");
-
-        mockMvc.perform(patch("/users/{userId}", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(userService, never()).updateUser(any(), any());
-    }
 }

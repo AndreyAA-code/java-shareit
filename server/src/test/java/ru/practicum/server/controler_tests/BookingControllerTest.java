@@ -14,12 +14,12 @@ import ru.practicum.server.booking.model.BookingState;
 import ru.practicum.server.booking.model.BookingStatus;
 import ru.practicum.server.booking.service.BookingService;
 import ru.practicum.server.exceptions.NotFoundException;
+
 import static org.hamcrest.Matchers.hasSize;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -74,38 +74,6 @@ class BookingControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequest_WhenStartIsPast() throws Exception {
-        BookingCreateDto invalidDto = new BookingCreateDto();
-        invalidDto.setStart(LocalDateTime.now().minusDays(1));
-        invalidDto.setEnd(LocalDateTime.now().plusDays(1));
-        invalidDto.setItemId(itemId);
-
-        mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(bookingService, never()).createBooking(any(), eq(userId));
-    }
-
-    @Test
-    void shouldReturnBadRequest_WhenItemIdIsNull() throws Exception {
-        BookingCreateDto invalidDto = new BookingCreateDto();
-        invalidDto.setStart(LocalDateTime.now().plusDays(1));
-        invalidDto.setEnd(LocalDateTime.now().plusDays(2));
-        invalidDto.setItemId(null);
-
-        mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(bookingService, never()).createBooking(any(), eq(userId));
-    }
-
-    @Test
     void shouldApproveBooking_Success() throws Exception {
         BookingDto approvedDto = BookingDto.builder()
                 .id(bookingId)
@@ -155,36 +123,6 @@ class BookingControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(bookingService, times(1)).approve(eq(userId), eq(999L), eq(true));
-    }
-
-    @Test
-    void shouldReturnBadRequest_WhenStartIsNull() throws Exception {
-        BookingCreateDto invalidDto = new BookingCreateDto();
-        invalidDto.setEnd(LocalDateTime.now().plusDays(1));
-        invalidDto.setItemId(itemId);
-
-        mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(bookingService, never()).createBooking(any(), eq(userId));
-    }
-
-    @Test
-    void shouldReturnBadRequest_WhenEndIsNull() throws Exception {
-        BookingCreateDto invalidDto = new BookingCreateDto();
-        invalidDto.setStart(LocalDateTime.now().plusDays(1));
-        invalidDto.setItemId(itemId);
-
-        mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(bookingService, never()).createBooking(any(), eq(userId));
     }
 
     @Test

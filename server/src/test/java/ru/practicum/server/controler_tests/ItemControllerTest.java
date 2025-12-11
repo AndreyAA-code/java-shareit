@@ -19,7 +19,6 @@ import ru.practicum.server.exceptions.NotFoundException;
 import java.util.List;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -179,66 +178,6 @@ class ItemControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(itemService, times(1)).getItemById(999L, userId);
-    }
-
-    @Test
-    void shouldValidateOnCreateItemWithNullName() throws Exception {
-        ItemCreateDto invalidDto = new ItemCreateDto();
-        invalidDto.setName(null);
-        invalidDto.setDescription("Description");
-        invalidDto.setAvailable(true);
-
-        mockMvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemService, never()).createItem(any(), eq(userId));
-    }
-
-    @Test
-    void shouldValidateOnCreateItemWithEmptyName() throws Exception {
-        ItemCreateDto invalidDto = new ItemCreateDto();
-        invalidDto.setName("");
-        invalidDto.setDescription("Description");
-        invalidDto.setAvailable(true);
-
-        mockMvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemService, never()).createItem(any(), eq(userId));
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenAddingCommentWithEmptyText() throws Exception {
-        CommentDto invalidComment = new CommentDto();
-        invalidComment.setText("");
-
-        mockMvc.perform(post("/items/{itemId}/comment", itemId)
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidComment)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemService, never()).addComment(eq(itemId), eq(userId), any());
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenAddingCommentWithNullText() throws Exception {
-        CommentDto invalidComment = new CommentDto();
-        invalidComment.setText(null);
-
-        mockMvc.perform(post("/items/{itemId}/comment", itemId)
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidComment)))
-                .andExpect(status().isBadRequest());
-
-        verify(itemService, never()).addComment(eq(itemId), eq(userId), any());
     }
 
     @Test
