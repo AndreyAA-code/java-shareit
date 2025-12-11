@@ -1,6 +1,5 @@
 package ru.practicum.gateway.user;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +18,6 @@ public class UserClient extends BaseClient {
 
     @Value("${server.host}")
     private String host;
-
-    @PostConstruct
-    public void init() {
-        System.out.println("🎯 [UserClient] Инициализация: host = " + host);
-    }
 
     @Autowired
     public UserClient(RestTemplate restTemplate) {
