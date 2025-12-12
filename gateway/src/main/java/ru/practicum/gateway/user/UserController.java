@@ -1,6 +1,5 @@
 package ru.practicum.gateway.user;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+    public ResponseEntity<Object> createUser(@RequestBody UserCreateDto userCreateDto) {
         return userClient.createUser(userCreateDto);
     }
 

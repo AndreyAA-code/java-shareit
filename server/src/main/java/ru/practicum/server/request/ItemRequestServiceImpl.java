@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.item.dto.item.ItemForItemRequestsDto;
 import ru.practicum.server.item.dto.item.ItemMapper;
+import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.repository.ItemRepository;
 import ru.practicum.server.request.dto.ItemRequestCreateDto;
 import ru.practicum.server.request.dto.ItemRequestDto;
@@ -14,6 +15,7 @@ import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,23 +37,30 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getOwnItemRequests(Long userId) {
         User requestor = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + "not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
 
         List<ItemRequest> requests = itemRequestRepository
                 .findByRequestorIdOrderByCreatedDesc(userId);
 
+        List<Long> requestIds = requests.stream()
+                .map(ItemRequest::getId)
+                .collect(Collectors.toList());
+
+        List<Item> items = itemRepository.findByRequestIdIn(requestIds);
+        Map<Long, List<ItemForItemRequestsDto>> itemsByRequestId = items.stream()
+                .collect(Collectors.groupingBy(
+                        item -> item.getRequest().getId(),
+                        Collectors.mapping(ItemMapper::mapItemToItemForItemRequestsDto, Collectors.toList())
+                ));
+
         return requests.stream()
                 .map(request -> {
-                    List<ItemForItemRequestsDto> items = itemRepository.findByRequestId(request.getId())
-                            .stream()
-                            .map(ItemMapper::mapItemToItemForItemRequestsDto)
-                            .collect(Collectors.toList());
-
+                    List<ItemForItemRequestsDto> requestItems = itemsByRequestId.getOrDefault(request.getId(), List.of());
                     return ItemRequestDto.builder()
                             .id(request.getId())
                             .description(request.getDescription())
                             .created(request.getCreated())
-                            .items(items)
+                            .items(requestItems)
                             .build();
                 })
                 .collect(Collectors.toList());
