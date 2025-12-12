@@ -1,5 +1,6 @@
 package ru.practicum.server.integration_tests;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.booking.dto.BookingDto;
 import ru.practicum.server.booking.dto.BookingCreateDto;
+import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.model.BookingStatus;
 import ru.practicum.server.booking.service.BookingService;
 import ru.practicum.server.exceptions.NotAcceptableException;
@@ -18,9 +20,11 @@ import ru.practicum.server.item.dto.item.ItemCommentsLastNextBookingDto;
 import ru.practicum.server.item.dto.item.ItemCreateDto;
 import ru.practicum.server.item.dto.item.ItemDto;
 import ru.practicum.server.item.dto.item.ItemUpdateDto;
+import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.service.ItemService;
 import ru.practicum.server.user.dto.UserCreateDto;
 import ru.practicum.server.user.dto.UserDto;
+import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -30,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
 class ItemServiceIntegrationTest {
 
@@ -38,37 +41,40 @@ class ItemServiceIntegrationTest {
     private ItemService itemService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    BookingService bookingService;
+    EntityManager entityManager;
 
     private Long ownerId;
     private Long itemId;
+    private Long bookerId;
 
     @BeforeEach
     void setUp() {
-        UserCreateDto userDto = new UserCreateDto();
-        userDto.setName("Test Owner");
-        userDto.setEmail("owner@test.com");
-        UserDto savedUser = userService.createUser(userDto);
-        ownerId = savedUser.getId();
+            User owner = User.builder()
+                    .name("Test Owner")
+                    .email("owner@test.com")
+                    .build();
+            entityManager.persist(owner);
+            entityManager.flush();
+            ownerId = owner.getId();
 
-        ItemCreateDto itemDto = new ItemCreateDto();
-        itemDto.setName("Test Item");
-        itemDto.setDescription("This is a test item");
-        itemDto.setAvailable(true);
+            Item item = Item.builder()
+                    .name("Test Item")
+                    .description("This is a test item")
+                    .available(true)
+                    .owner(owner)
+                    .build();
+            entityManager.persist(item);
+            entityManager.flush();
+            itemId = item.getId();
 
-        ItemDto savedItem = itemService.createItem(itemDto, ownerId);
-        itemId = savedItem.getId();
-    }
+            User booker = User.builder()
+                    .name("Commenter")
+                    .email("commenter@test.com")
+                    .build();
+            entityManager.persist(booker);
+            entityManager.flush();
+            bookerId = booker.getId();
 
-    @AfterEach
-    void tearDown() {
-        if (ownerId != null) {
-            userService.deleteUser(ownerId);
-            ownerId = null;
-        }
     }
 
     @Test
@@ -90,7 +96,7 @@ class ItemServiceIntegrationTest {
         assertNotNull(items);
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
-        ItemCommentsLastNextBookingDto item = items.get(0);
+        ItemCommentsLastNextBookingDto item = items.getFirst();
         assertEquals("Test Item", item.getName());
     }
 
@@ -135,23 +141,15 @@ class ItemServiceIntegrationTest {
 
     @Test
     void shouldAddComment_WhenUserHasFinishedBooking() {
-        UserCreateDto bookerDto = new UserCreateDto();
-        bookerDto.setName("Commenter");
-        bookerDto.setEmail("commenter@test.com");
-        UserDto savedBooker = userService.createUser(bookerDto);
-        Long bookerId = savedBooker.getId();
-
-        LocalDateTime now = LocalDateTime.now();
-        BookingCreateDto bookingDto = BookingCreateDto.builder()
-                .itemId(itemId)
-                .start(now.minusHours(3))
-                .end(now.minusHours(1))
+        Booking booking = Booking.builder()
+                .item(entityManager.getReference(Item.class, itemId))
+                .booker(entityManager.getReference(User.class, bookerId))
+                .start(LocalDateTime.now().minusHours(3))
+                .end(LocalDateTime.now().minusHours(1))
+                .status(BookingStatus.APPROVED)
                 .build();
-
-        BookingDto createdBooking = bookingService.createBooking(bookingDto, bookerId);
-        BookingDto approvedBooking = bookingService.approve(createdBooking.getId(), ownerId, true);
-
-        assertEquals(BookingStatus.APPROVED, approvedBooking.getStatus());
+        entityManager.persist(booking);
+        entityManager.flush();
 
         CommentDto commentDto = CommentDto.builder()
                 .text("Хорошая вещь")
@@ -163,39 +161,35 @@ class ItemServiceIntegrationTest {
         assertEquals("Хорошая вещь", addedComment.getText());
         assertEquals("Commenter", addedComment.getAuthorName());
         assertNotNull(addedComment.getCreated());
+        assertTrue(addedComment.getCreated().isBefore(LocalDateTime.now().plusSeconds(10)));
     }
 
     @Test
     @Transactional
     void shouldNotAddComment_WhenNoFinishedBooking() {
-        UserCreateDto booker = new UserCreateDto();
-        booker.setName("Commenter");
-        booker.setEmail("commenter@test.com");
-        UserDto savedBooker = userService.createUser(booker);
-        Long bookerId = savedBooker.getId();
-
-        LocalDateTime now = LocalDateTime.now();
-        BookingCreateDto booking = BookingCreateDto.builder()
-                .itemId(itemId)
-                .start(now.minusHours(3))
-                .end(now.plusHours(1))
+        Booking booking = Booking.builder()
+                .item(entityManager.getReference(Item.class, itemId))
+                .booker(entityManager.getReference(User.class, bookerId))
+                .start(LocalDateTime.now().minusHours(3))
+                .end(LocalDateTime.now().plusHours(1))
+                .status(BookingStatus.APPROVED)
                 .build();
+        entityManager.persist(booking);
+        entityManager.flush();
 
-        BookingDto createdBooking = bookingService.createBooking(booking, bookerId);
-        BookingDto approvedBooking = bookingService.approve(createdBooking.getId(), ownerId, true);
-
-        assertEquals(BookingStatus.APPROVED, approvedBooking.getStatus());
-
-        CommentDto comment = CommentDto.builder()
+        CommentDto commentDto = CommentDto.builder()
                 .text("Хочу оставить комментарий до окончания бронирования")
                 .build();
 
         NotAcceptableException exception = assertThrows(
                 NotAcceptableException.class,
-                () -> itemService.addComment(itemId, bookerId, comment)
+                () -> itemService.addComment(itemId, bookerId, commentDto)
         );
 
-        assertTrue(exception.getMessage().contains("has no completed booking for item"));
+        assertTrue(
+                exception.getMessage().contains("has no completed booking for item"),
+                "Expected error message to indicate missing completed booking"
+        );
     }
 
 }

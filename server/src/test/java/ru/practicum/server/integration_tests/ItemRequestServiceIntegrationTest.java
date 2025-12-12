@@ -1,5 +1,6 @@
 package ru.practicum.server.integration_tests;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,16 +8,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.exceptions.NotFoundException;
-import ru.practicum.server.item.dto.item.ItemCreateDto;
-import ru.practicum.server.item.dto.item.ItemDto;
 import ru.practicum.server.item.dto.item.ItemForItemRequestsDto;
-import ru.practicum.server.item.service.ItemService;
+import ru.practicum.server.item.model.Item;
 import ru.practicum.server.request.ItemRequestService;
 import ru.practicum.server.request.dto.ItemRequestCreateDto;
 import ru.practicum.server.request.dto.ItemRequestDto;
-import ru.practicum.server.user.dto.UserCreateDto;
-import ru.practicum.server.user.dto.UserDto;
-import ru.practicum.server.user.service.UserService;
+import ru.practicum.server.request.model.ItemRequest;
+import ru.practicum.server.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,10 +31,7 @@ class ItemRequestServiceIntegrationTest {
     private ItemRequestService itemRequestService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ItemService itemService;
+    EntityManager entityManager;
 
     private Long requesterId;
     private Long ownerId;
@@ -44,30 +39,29 @@ class ItemRequestServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        UserCreateDto requesterDto = new UserCreateDto();
-        requesterDto.setName("Requester");
-        requesterDto.setEmail("requester@test.com");
-        UserDto savedRequester = userService.createUser(requesterDto);
-        requesterId = savedRequester.getId();
+        User requester = User.builder()
+                .name("Requester")
+                .email("requester@test.com")
+                .build();
+        entityManager.persist(requester);
+        entityManager.flush();
+        this.requesterId = requester.getId();
 
-        UserCreateDto ownerDto = new UserCreateDto();
-        ownerDto.setName("Owner");
-        ownerDto.setEmail("owner@test.com");
-        UserDto savedOwner = userService.createUser(ownerDto);
-        ownerId = savedOwner.getId();
+        User owner = User.builder()
+                .name("Owner")
+                .email("owner@test.com")
+                .build();
+        entityManager.persist(owner);
+        entityManager.flush();
+        this.ownerId = owner.getId();
 
-        UserCreateDto otherUserDto = new UserCreateDto();
-        otherUserDto.setName("Other User");
-        otherUserDto.setEmail("other@test.com");
-        UserDto savedOther = userService.createUser(otherUserDto);
-        otherUserId = savedOther.getId();
-    }
-
-    @AfterEach
-    void tearDown() {
-        if (requesterId != null) userService.deleteUser(requesterId);
-        if (ownerId != null) userService.deleteUser(ownerId);
-        if (otherUserId != null) userService.deleteUser(otherUserId);
+        User otherUser = User.builder()
+                .name("Other User")
+                .email("other@test.com")
+                .build();
+        entityManager.persist(otherUser);
+        entityManager.flush();
+        this.otherUserId = otherUser.getId();
     }
 
     @Test
@@ -90,27 +84,30 @@ class ItemRequestServiceIntegrationTest {
         requestDto.setDescription("Ищу перфоратор");
         ItemRequestDto createdRequest = itemRequestService.create(requestDto, requesterId);
 
-        ItemCreateDto itemDto = new ItemCreateDto();
-        itemDto.setName("Перфоратор");
-        itemDto.setDescription("Мощный перфоратор");
-        itemDto.setAvailable(true);
-        itemDto.setRequestId(createdRequest.getId());
+        Item item = Item.builder()
+                .name("Перфоратор")
+                .description("Мощный перфоратор")
+                .available(true)
+                .owner(entityManager.getReference(User.class, ownerId))
+                .request(entityManager.getReference(ItemRequest.class, createdRequest.getId()))
+                .build();
 
-        ItemDto savedItem = itemService.createItem(itemDto, ownerId);
+        entityManager.persist(item);
+        entityManager.flush();
 
         List<ItemRequestDto> requests = itemRequestService.getOwnItemRequests(requesterId);
-
         assertNotNull(requests);
         assertFalse(requests.isEmpty());
-        ItemRequestDto found = requests.get(0);
+        ItemRequestDto found = requests.getFirst();
 
         assertEquals(createdRequest.getId(), found.getId());
         assertEquals("Ищу перфоратор", found.getDescription());
         assertEquals(1, found.getItems().size());
 
-        ItemForItemRequestsDto item = found.getItems().get(0);
-        assertEquals("Перфоратор", item.getName());
-        assertEquals(ownerId, item.getOwnerId());
+        ItemForItemRequestsDto itemDto = found.getItems().getFirst();
+        assertEquals("Перфоратор", itemDto.getName());
+        assertEquals(ownerId, itemDto.getOwnerId());
+        assertEquals(ownerId, itemDto.getOwnerId());
     }
 
     @Test
@@ -127,7 +124,7 @@ class ItemRequestServiceIntegrationTest {
 
         assertNotNull(requests);
         assertEquals(1, requests.size());
-        assertEquals("Ищу уровень", requests.get(0).getDescription());
+        assertEquals("Ищу уровень", requests.getFirst().getDescription());
     }
 
     @Test
@@ -136,12 +133,16 @@ class ItemRequestServiceIntegrationTest {
         requestDto.setDescription("Мне нужна лестница");
         ItemRequestDto created = itemRequestService.create(requestDto, requesterId);
 
-        ItemCreateDto itemDto = new ItemCreateDto();
-        itemDto.setName("Лестница");
-        itemDto.setDescription("3 метра");
-        itemDto.setAvailable(true);
-        itemDto.setRequestId(created.getId());
-        itemService.createItem(itemDto, ownerId);
+        Item item = Item.builder()
+                .name("Лестница")
+                .description("3 метра")
+                .available(true)
+                .owner(entityManager.getReference(User.class, ownerId))
+                .request(entityManager.getReference(ItemRequest.class, created.getId()))
+                .build();
+
+        entityManager.persist(item);
+        entityManager.flush();
 
         ItemRequestDto found = itemRequestService.getItemRequest(created.getId(), otherUserId);
 
@@ -149,7 +150,8 @@ class ItemRequestServiceIntegrationTest {
         assertEquals(created.getId(), found.getId());
         assertEquals("Мне нужна лестница", found.getDescription());
         assertEquals(1, found.getItems().size());
-        assertEquals("Лестница", found.getItems().get(0).getName());
+        assertEquals("Лестница", found.getItems().getFirst().getName());
+
     }
 
     @Test
