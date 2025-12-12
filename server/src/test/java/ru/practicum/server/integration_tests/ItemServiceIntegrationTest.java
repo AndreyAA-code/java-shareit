@@ -1,19 +1,14 @@
 package ru.practicum.server.integration_tests;
 
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.server.booking.dto.BookingDto;
-import ru.practicum.server.booking.dto.BookingCreateDto;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.model.BookingStatus;
-import ru.practicum.server.booking.service.BookingService;
 import ru.practicum.server.exceptions.NotAcceptableException;
 import ru.practicum.server.item.dto.comment.CommentDto;
 import ru.practicum.server.item.dto.item.ItemCommentsLastNextBookingDto;
@@ -22,10 +17,7 @@ import ru.practicum.server.item.dto.item.ItemDto;
 import ru.practicum.server.item.dto.item.ItemUpdateDto;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.service.ItemService;
-import ru.practicum.server.user.dto.UserCreateDto;
-import ru.practicum.server.user.dto.UserDto;
 import ru.practicum.server.user.model.User;
-import ru.practicum.server.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;

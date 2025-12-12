@@ -1,5 +1,6 @@
 package ru.practicum.gateway.request;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping
-    public ResponseEntity<Object> createItemRequest(@RequestBody ItemRequestCreateDto itemRequestCreateDto,
+    public ResponseEntity<Object> createItemRequest(@Valid @RequestBody ItemRequestCreateDto itemRequestCreateDto,
                                                     @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         return itemRequestClient.createItemRequest(itemRequestCreateDto, userId);
     }

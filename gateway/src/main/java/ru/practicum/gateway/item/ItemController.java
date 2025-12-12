@@ -1,5 +1,6 @@
 package ru.practicum.gateway.item;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ItemController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> createItem(@RequestBody ItemCreateDto itemCreateDto,
+    public ResponseEntity<Object> createItem(@Valid @RequestBody ItemCreateDto itemCreateDto,
                               @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         log.info("createItem()");
         return itemClient.createItem(itemCreateDto, userId);
@@ -38,7 +39,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object>  updateItemById(@PathVariable Long itemId,
-                                  @RequestBody ItemUpdateDto itemUpdateDto,
+                                  @Valid @RequestBody ItemUpdateDto itemUpdateDto,
                                   @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         log.info("updateItemById()");
         return itemClient.updateItemById(itemId, itemUpdateDto, userId);
@@ -52,7 +53,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object>  addComment(@PathVariable Long itemId,
-                                 @RequestBody CommentDto commentDto,
+                                 @Valid @RequestBody CommentDto commentDto,
                                  @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         log.info("addComment for item {} by user {}: {}", itemId, userId, commentDto.getText());
         return itemClient.addComment(itemId,commentDto, userId);
