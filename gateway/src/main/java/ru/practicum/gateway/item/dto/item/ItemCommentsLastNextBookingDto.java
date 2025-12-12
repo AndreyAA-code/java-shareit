@@ -1,0 +1,24 @@
+package ru.practicum.gateway.item.dto.item;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Data;
+import ru.practicum.gateway.booking.dto.BookingDto;
+import ru.practicum.gateway.item.dto.comment.CommentDto;
+
+import java.util.List;
+
+@Data
+@Builder
+public class ItemCommentsLastNextBookingDto {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long id;
+    private String name;
+    private String description;
+    private Long ownerId;
+    private Boolean available;
+    private String request;
+    private List<CommentDto> comments;
+    private BookingDto lastBooking;
+    private BookingDto nextBooking;
+}
