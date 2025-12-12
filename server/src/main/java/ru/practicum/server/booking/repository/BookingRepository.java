@@ -35,7 +35,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItemInAndStatus(List<Item> itemId, BookingStatus bookingStatus);
 
-    Boolean existsByBookerIdAndItemIdAndEndBefore(Long userId, Long itemId, LocalDateTime now);
+    Boolean existsByBookerIdAndItemIdAndStatusAndEndBefore(Long bookerId, Long itemId, BookingStatus status,
+            LocalDateTime time);
 
     /*
     @Query(value = "SELECT b FROM Booking b WHERE b.item.id = ?1 " +

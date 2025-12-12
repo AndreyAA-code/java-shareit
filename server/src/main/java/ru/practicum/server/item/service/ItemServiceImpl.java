@@ -149,7 +149,8 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("User with id: " + userId + "doesn't exist"));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id: " + itemId + "doesn't exist"));
-        Boolean isBookingExistsAndFinished = bookingRepository.existsByBookerIdAndItemIdAndEndBefore(userId, itemId, LocalDateTime.now());
+        Boolean isBookingExistsAndFinished = bookingRepository.existsByBookerIdAndItemIdAndStatusAndEndBefore(userId,
+                itemId, BookingStatus.APPROVED, LocalDateTime.now());
         if (!isBookingExistsAndFinished) {
             throw new NotAcceptableException("User with id: " + userId + " has no completed booking for item " + itemId);
         }
